@@ -20,7 +20,10 @@ Java_com_example_intmob_MainActivity_stringFromJNI(
     close(fd);
     char strr[11];
     sprintf(strr, "%d", data);
+
+
     //std::string hello = "Hello from C++";
     //return env->NewStringUTF(hello.c_str());
+
     return env->NewStringUTF(strr);
 }
