@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
+import android.view.KeyEvent;
 import android.widget.TextView;
 
 import com.example.intmob.databinding.ActivityMainBinding;
@@ -24,6 +25,18 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private ActivityMainBinding binding;
+
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        boolean ret = super.onKeyDown(keyCode, event);
+
+        TextView tv = binding.sampleText;
+        //tv.setText(String.valueOf(keyCode));
+
+
+        return ret;
+    }
 
     MyThread m_thread;
     EventHandler m_eventHandler;
