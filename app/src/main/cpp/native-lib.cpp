@@ -63,12 +63,6 @@ JNIEXPORT jstring JNICALL Java_com_example_intmob_MainActivity_stringFromJNI(
     const char* eventname = env->GetStringUTFChars(event, 0);
     const char* path = concatd(eventname);
 
-    int errn = chmod777(path);
-    if(errn != 0){
-        const char* errmsg = concat("chmod777:", strerror(errn));
-        return env->NewStringUTF(errmsg);
-    }
-
     fd = open(path, O_RDONLY);
 
     if (fd < 0) {
@@ -83,7 +77,7 @@ JNIEXPORT jstring JNICALL Java_com_example_intmob_MainActivity_stringFromJNI(
     ssize_t r = read(fd, &input_data, input_size);
 
     if (r < 0) {
-        char* errmsg = strerror(errno);
+        const char* errmsg = concat("read:", strerror(errno));
         return env->NewStringUTF(errmsg);
     }
 

@@ -1,29 +1,18 @@
 package com.example.intmob;
 
-import static java.lang.Thread.sleep;
-
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-
-import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
-import android.widget.TextView;
-
-import com.example.intmob.databinding.ActivityMainBinding;
-
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.attribute.PosixFileAttributes;
-import java.nio.file.attribute.PosixFilePermission;
-import java.nio.file.attribute.PosixFilePermissions;
-import java.util.Set;
+import static java.lang.Thread.*;
+import androidx.annotation.*;
+import androidx.appcompat.app.*;
+import android.os.*;
+import android.widget.*;
+import com.example.intmob.databinding.*;
+import java.io.*;
+import java.lang.Process;
 import java.nio.file.*;
 import java.nio.file.attribute.*;
-import java.util.Set;
+import java.nio.file.*;
+import java.nio.file.attribute.*;
+import java.util.*;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -46,7 +35,6 @@ public class MainActivity extends AppCompatActivity {
         setContentView(binding.getRoot());
 
         setTextHandler = new SetTextHandler();
-
 
         m_thread = new MyThread();
         m_thread.start();
@@ -79,6 +67,17 @@ public class MainActivity extends AppCompatActivity {
     {
         public void run(){
             try{
+                Process p = Runtime.getRuntime().exec("su");
+                DataOutputStream os = new DataOutputStream(p.getOutputStream());
+                os.writeBytes("chmod 777 /dev/input/*\n");
+                os.writeBytes("exit\n");
+                os.flush();
+                os.close();
+                try {
+                    p.waitFor();
+                } catch (InterruptedException e) {
+                    setText("waitFor:" + e.toString());
+                }
 
                 final String eventname = idev();
 
@@ -87,9 +86,10 @@ public class MainActivity extends AppCompatActivity {
                     String str1 = stringFromJNI(eventname);
                     setText(str1);
                 }
+
             }
             catch(Exception e){
-                System.err.println(e);
+                setText("run:"+e.toString());
             }
         }
     }
