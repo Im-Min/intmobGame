@@ -83,8 +83,9 @@ JNIEXPORT jstring JNICALL Java_com_example_intmob_MainActivity_stringFromJNI(
 
     //printf("time=%ld.%06lu type=%hu code=%hu value=%u\n", input_data->time.tv_sec,input_data->time.tv_usec, input_data->type, input_data->code, input_data->value);
 
-    char result[1];
+    char result[2];
     result[0] = '0' + (input_data.code - 1);
+    result[1] = '\0';
     return env->NewStringUTF(result);
 }
 
