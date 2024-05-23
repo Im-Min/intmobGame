@@ -47,10 +47,9 @@ public class MainActivity extends AppCompatActivity {
 
         setTextHandler = new SetTextHandler();
 
-        setText(idev());
 
-        //m_thread = new MyThread();
-        //m_thread.start();
+        m_thread = new MyThread();
+        m_thread.start();
     }
 
     private void setText(Object text){
@@ -80,14 +79,13 @@ public class MainActivity extends AppCompatActivity {
     {
         public void run(){
             try{
-                Thread.sleep(1000);
-                exec("chmod 777 /dev/input/*");
-                setText(1234);
-                while(true){
 
+                final String eventname = idev();
+
+                while(true){
                     Thread.sleep(1000);
-                    Message msg1 = setTextHandler.obtainMessage(0, stringFromJNI());
-                    setTextHandler.sendMessage(msg1);
+                    String str1 = stringFromJNI(eventname);
+                    setText(str1);
                 }
             }
             catch(Exception e){
@@ -111,7 +109,7 @@ public class MainActivity extends AppCompatActivity {
      * A native method that is implemented by the 'intmob' native library,
      * which is packaged with this application.
      */
-    private native String stringFromJNI();
+    private native String stringFromJNI(String event);
     private native void div0();
     private native String idev();
 

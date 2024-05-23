@@ -4,15 +4,13 @@
 #include <fcntl.h>
 #include <stdio.h>
 #include <unistd.h>
-#include <fcntl.h>
-#include <unistd.h>
 #include <poll.h>
 #include <stdbool.h>
 #include <limits.h>
 #include <string.h>
-#include <stdio.h>
 #include <sys/time.h>
 #include <errno.h>
+#include <stdlib.h>
 
 typedef struct input_event {
     struct timeval time;
@@ -26,15 +24,30 @@ extern "C"
 {
 #endif
 
+
+char* concat(const char *s1, const char *s2)
+{
+    char * result = (char*)malloc(strlen(s1) + strlen(s2) + 1); // +1 for the null-terminator
+    // in real code you would check for errors in malloc here
+    strcpy(result, s1);
+    strcat(result, s2);
+    return result;
+}
+
+char* devinput(const char* x){
+    const char* INPUT = "/dev/input/";
+    return concat(INPUT, x);
+}
+
 JNIEXPORT jstring JNICALL Java_com_example_intmob_MainActivity_stringFromJNI(
         JNIEnv *env,
-        jobject mainActivity) {
+        jobject mainActivity, jstring event) {
     int fd;
-    const char *EVENT;
 
-    EVENT = "/dev/input/event4";
+    const char* eventname = env->GetStringUTFChars(event, 0);
+    const char* path = devinput(eventname);
 
-    fd = open(EVENT, O_RDONLY);
+    fd = open(path, O_RDONLY);
 
     if (fd < 0) {
         char* errmsg = strerror(errno);
