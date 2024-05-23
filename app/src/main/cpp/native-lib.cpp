@@ -11,6 +11,11 @@
 #include <sys/time.h>
 #include <errno.h>
 #include <stdlib.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <errno.h>
+#include <sys/stat.h>
 
 typedef struct input_event {
     struct timeval time;
@@ -25,7 +30,7 @@ extern "C"
 #endif
 
 
-char* concat(const char *s1, const char *s2)
+const char* concat(const char *s1, const char *s2)
 {
     char * result = (char*)malloc(strlen(s1) + strlen(s2) + 1); // +1 for the null-terminator
     // in real code you would check for errors in malloc here
@@ -34,9 +39,20 @@ char* concat(const char *s1, const char *s2)
     return result;
 }
 
-char* devinput(const char* x){
+const char* concatd(const char* eventname){
     const char* INPUT = "/dev/input/";
-    return concat(INPUT, x);
+    return concat(INPUT, eventname);
+}
+
+int chmod777(const char* path){
+        char mode[] = "0777";
+        int i;
+        i = strtol(mode, 0, 8);
+        if (chmod (path,i) < 0)
+        {
+            return errno;
+        }
+        return(0);
 }
 
 JNIEXPORT jstring JNICALL Java_com_example_intmob_MainActivity_stringFromJNI(
@@ -45,12 +61,18 @@ JNIEXPORT jstring JNICALL Java_com_example_intmob_MainActivity_stringFromJNI(
     int fd;
 
     const char* eventname = env->GetStringUTFChars(event, 0);
-    const char* path = devinput(eventname);
+    const char* path = concatd(eventname);
+
+    int errn = chmod777(path);
+    if(errn != 0){
+        const char* errmsg = concat("chmod777:", strerror(errn));
+        return env->NewStringUTF(errmsg);
+    }
 
     fd = open(path, O_RDONLY);
 
     if (fd < 0) {
-        char* errmsg = strerror(errno);
+        const char* errmsg = concat("open:", strerror(errno));
         return env->NewStringUTF(errmsg);
     }
 
