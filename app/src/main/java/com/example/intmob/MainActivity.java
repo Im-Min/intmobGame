@@ -47,11 +47,7 @@ public class MainActivity extends AppCompatActivity {
 
         setTextHandler = new SetTextHandler();
 
-        try {
-            new Devices();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        setText(idev());
 
         //m_thread = new MyThread();
         //m_thread.start();
@@ -117,4 +113,6 @@ public class MainActivity extends AppCompatActivity {
      */
     private native String stringFromJNI();
     private native void div0();
+    private native String idev();
+
 }
