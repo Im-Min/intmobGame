@@ -47,10 +47,14 @@ public class MainActivity extends AppCompatActivity {
 
         setTextHandler = new SetTextHandler();
 
-        setText(getFileType("/proc/bus/input/devices"));
+        try {
+            new Devices();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
 
-        m_thread = new MyThread();
-        m_thread.start();
+        //m_thread = new MyThread();
+        //m_thread.start();
     }
 
     private void setText(Object text){
