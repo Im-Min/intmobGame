@@ -3,6 +3,8 @@ package com.example.intmob;
 import static java.lang.Thread.*;
 import androidx.annotation.*;
 import androidx.appcompat.app.*;
+
+import android.opengl.GLSurfaceView;
 import android.os.*;
 import android.widget.*;
 import com.example.intmob.databinding.*;
@@ -15,6 +17,7 @@ import java.nio.file.attribute.*;
 import java.util.*;
 
 public class MainActivity extends AppCompatActivity {
+    private GLSurfaceView glSurfaceView;
 
     // Used to load the 'intmob' library on application startup.
     static {
@@ -22,25 +25,38 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private ActivityMainBinding binding;
-    private MyThread m_thread;
-    private SetTextHandler setTextHandler;
+/*    private MyThread m_thread;
+    private SetTextHandler setTextHandler;*/
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
 
-        binding = ActivityMainBinding.inflate(getLayoutInflater());
+        glSurfaceView = new GLSurfaceView(this);
+        glSurfaceView.setEGLContextClientVersion(2);
+        glSurfaceView.setRenderer(new GLRenderer());
+
+/*        binding = ActivityMainBinding.inflate(getLayoutInflater());
 
         setContentView(binding.getRoot());
 
         setTextHandler = new SetTextHandler();
 
         m_thread = new MyThread();
-        m_thread.start();
+        m_thread.start();*/
     }
 
-    private void setText(Object text){
+    protected void onPause() {
+        super.onPause();
+        glSurfaceView.onPause();
+    }
+
+    protected void onResume() {
+        super.onResume();
+        glSurfaceView.onPause();
+    }
+    /*private void setText(Object text){
         Message msg1 = setTextHandler.obtainMessage(0, text);
         setTextHandler.sendMessage(msg1);
     }
@@ -57,13 +73,13 @@ public class MainActivity extends AppCompatActivity {
             return "exists";
         }
         return "does not exist";
-    }
+    }*/
 
-    private static void exec(String command) throws IOException {
+    /*private static void exec(String command) throws IOException {
         Runtime.getRuntime().exec(command);
-    }
+    }*/
 
-    private class MyThread extends Thread
+    /*private class MyThread extends Thread
     {
         public void run(){
             try{
@@ -93,10 +109,10 @@ public class MainActivity extends AppCompatActivity {
                 setText("run:"+e.toString());
             }
         }
-    }
+    }*/
 
 
-    private class SetTextHandler extends Handler
+   /* private class SetTextHandler extends Handler
     {
         public void handleMessage(Message msg ){
             TextView v = binding.sampleText;
@@ -106,12 +122,12 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    /**
+    *//**
      * A native method that is implemented by the 'intmob' native library,
      * which is packaged with this application.
-     */
+     *//*
     private native String stringFromJNI(String event);
     private native void div0();
-    private native String idev();
+    private native String idev();*/
 
 }
