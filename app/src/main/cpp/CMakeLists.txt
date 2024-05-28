@@ -1,38 +1,21 @@
-# For more information about using CMake with Android Studio, read the
-# documentation: https://d.android.com/studio/projects/add-native-code.html.
-# For more examples on how to use CMake, see https://github.com/android/ndk-samples.
-
-# Sets the minimum CMake version required for this project.
-cmake_minimum_required(VERSION 3.22.1)
-
-# Declares the project name. The project name can be accessed via ${ PROJECT_NAME},
-# Since this is the top level CMakeLists.txt, the project name is also accessible
-# with ${CMAKE_PROJECT_NAME} (both CMake variables are in-sync within the top level
-# build script scope).
-project("intmob")
-
-# Creates and names a library, sets it as either STATIC
-# or SHARED, and provides the relative paths to its source code.
-# You can define multiple libraries, and CMake builds them for you.
-# Gradle automatically packages shared libraries with your APK.
+﻿# CMakeList.txt: Packman에 대한 CMake 프로젝트, 여기에 소스를 포함하고
+# 프로젝트 특정 논리를 정의합니다.
 #
-# In this top level CMakeLists.txt, ${CMAKE_PROJECT_NAME} is used to define
-# the target library name; in the sub-module's CMakeLists.txt, ${PROJECT_NAME}
-# is preferred for the same purpose.
-#
-# In order to load a library into your app from Java/Kotlin, you must call
-# System.loadLibrary() and pass the name of the library defined here;
-# for GameActivity/NativeActivity derived applications, the same library name must be
-# used in the AndroidManifest.xml file.
-add_library(${CMAKE_PROJECT_NAME} SHARED
-        # List C/C++ source files with relative paths to this CMakeLists.txt.
-        native-lib.cpp
-        idev.cpp)
+cmake_minimum_required (VERSION 3.8)
 
-# Specifies libraries CMake should link to your target library. You
-# can link libraries from various origins, such as libraries defined in this
-# build script, prebuilt third-party libraries, or Android system libraries.
-target_link_libraries(${CMAKE_PROJECT_NAME}
-        # List libraries link to the target library
-        android
-        log)
+# 지원되는 경우 MSVC 컴파일러에 대해 핫 다시 로드 사용하도록 설정합니다.
+if (POLICY CMP0141)
+  cmake_policy(SET CMP0141 NEW)
+  set(CMAKE_MSVC_DEBUG_INFORMATION_FORMAT "$<IF:$<AND:$<C_COMPILER_ID:MSVC>,$<CXX_COMPILER_ID:MSVC>>,$<$<CONFIG:Debug,RelWithDebInfo>:EditAndContinue>,$<$<CONFIG:Debug,RelWithDebInfo>:ProgramDatabase>>")
+endif()
+
+project ("Packman")
+
+# 이 프로젝트의 실행 파일에 소스를 추가합니다.
+add_executable (Packman "game.cpp" "game.h" "gameplay.cpp")
+
+if (CMAKE_VERSION VERSION_GREATER 3.12)
+  set_property(TARGET Packman PROPERTY CXX_STANDARD 20)
+endif()
+
+# TODO: 필요한 경우 테스트를 추가하고 대상을 설치합니다.
