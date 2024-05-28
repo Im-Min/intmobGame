@@ -77,7 +77,7 @@ void Game::checkCollision() {
 }
 
 void Game::render() {
-    system("clear"); // Use "cls" for Windows
+    system("cls"); // Use "cls" for Windows
     for (int y = 0; y < map.height; ++y) {
         for (int x = 0; x < map.width; ++x) {
             if (pacman.position.x == x && pacman.position.y == y) {
