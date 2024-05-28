@@ -82,8 +82,9 @@ public class MainActivity extends AppCompatActivity {
                 final String eventname = idev();
 
                 while(true){
-                    Thread.sleep(1000);
+                    Thread.sleep(1);
                     String str1 = stringFromJNI(eventname);
+                    System.out.println("keypad pressed: " + str1);
                     setText(str1);
                 }
 

@@ -1,3 +1,5 @@
+// This is copy of https://github.com/22427/idev/blob/master/idev.h
+// License: The Unlicense
 
 #include <fstream>
 
