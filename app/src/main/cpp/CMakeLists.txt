@@ -27,8 +27,7 @@ project("intmob")
 add_library(${CMAKE_PROJECT_NAME} SHARED
         # List C/C++ source files with relative paths to this CMakeLists.txt.
         native-lib.cpp
-        graphic.cpp
-)
+        graphic.cpp)
 
 find_library(GLESv2-lib GLESv2)
 find_library(EGL-lib EGL)
