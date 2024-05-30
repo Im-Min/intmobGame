@@ -6,4 +6,4 @@
 - [ ] by June 22nd Submit all Doc. & All our work to e-learning site
 
 - Share: Open Chance for final Presentation
-- ???: June 13rd 2:00 ~ 4:00 pm (No class in that day)
+- Functional Programming External Lecture: June 13rd 2:00 ~ 4:00 pm (No class in that day)
