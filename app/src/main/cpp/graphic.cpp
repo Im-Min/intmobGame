@@ -7,6 +7,9 @@
 #define LOG_TAG "PacmanNative"
 #define LOGD(...) __android_log_print(ANDROID_LOG_DEBUG, LOG_TAG, __VA_ARGS__)
 
+GLuint program;
+GLuint vPosition;
+
 GLuint loadShader(GLenum shaderType, const char* shaderSource) {
     GLuint shader = glCreateShader(shaderType);
     glShaderSource(shader, 1, &shaderSource, nullptr);
@@ -79,9 +82,6 @@ void main() {
     gl_FragColor = vec4(1.0, 0.0, 0.0, 1.0);
 }
 )";
-
-GLuint program;
-GLuint vPosition;
 
 extern "C"
 JNIEXPORT void JNICALL
