@@ -54,29 +54,11 @@ public class MainActivity extends AppCompatActivity {
 
     protected void onResume() {
         super.onResume();
-        glSurfaceView.onPause();
+        glSurfaceView.onResume();
     }
     /*private void setText(Object text){
         Message msg1 = setTextHandler.obtainMessage(0, text);
         setTextHandler.sendMessage(msg1);
-    }
-
-    private static String getFileType(String path){
-        File file = new File(path);
-        if(file.isFile()){
-            return "file";
-        }
-        if(file.isDirectory()){
-            return "directory";
-        }
-        if(file.exists()){
-            return "exists";
-        }
-        return "does not exist";
-    }*/
-
-    /*private static void exec(String command) throws IOException {
-        Runtime.getRuntime().exec(command);
     }*/
 
     /*private class MyThread extends Thread

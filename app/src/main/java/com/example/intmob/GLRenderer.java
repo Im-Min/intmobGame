@@ -9,7 +9,7 @@ import javax.microedition.khronos.opengles.GL10;
 public class GLRenderer implements GLSurfaceView.Renderer {
 
     static {
-        System.loadLibrary(("graphic"));
+        System.loadLibrary("intmob");
     }
 
     @Override
