@@ -29,8 +29,18 @@ add_library(${CMAKE_PROJECT_NAME} SHARED
         native-lib.cpp
         graphic.cpp)
 
-find_library(GLESv2-lib GLESv2)
-find_library(EGL-lib EGL)
+# Check if the ANDROID_NDK_HOME environment variable is set
+if (NOT ANDROID_NDK)
+    message(FATAL_ERROR "ANDROID_NDK_HOME environment variable is not set!")
+endif()
+
+# Specifies the path to the OpenGL ES and EGL libraries
+set(OPENGLES_LIB_PATH ${ANDROID_NDK}/platforms/android-14/arch-x86/usr/lib)
+set(EGL_LIB_PATH ${ANDROID_NDK}/platforms/android-14/arch-x86/usr/lib)
+
+# Find the OpenGL ES and EGL libraries
+find_library(GLESv2-lib NAMES GLESv2 PATHS ${OPENGLES_LIB_PATH} REQUIRED)
+find_library(EGL-lib NAMES EGL PATHS ${EGL_LIB_PATH} REQUIRED)
 
 # Specifies libraries CMake should link to your target library. You
 # can link libraries from various origins, such as libraries defined in this
