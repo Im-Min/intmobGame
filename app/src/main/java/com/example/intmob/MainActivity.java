@@ -35,7 +35,8 @@ public class MainActivity extends AppCompatActivity {
 
         glSurfaceView = new GLSurfaceView(this);
         glSurfaceView.setEGLContextClientVersion(2);
-        glSurfaceView.setRenderer(new GLRenderer());
+        GLRenderer renderer = new GLRenderer();
+        glSurfaceView.setRenderer(renderer);
 
 /*        binding = ActivityMainBinding.inflate(getLayoutInflater());
 
