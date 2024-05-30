@@ -22,7 +22,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private ActivityMainBinding binding;
-    private MyThread m_thread;
+    private Thread thread;
     private SetTextHandler setTextHandler;
 
     @Override
@@ -36,8 +36,8 @@ public class MainActivity extends AppCompatActivity {
 
         setTextHandler = new SetTextHandler();
 
-        m_thread = new MyThread();
-        m_thread.start();
+        thread = new Thread(()->eventloop());
+        thread.start();
     }
 
     private void setText(Object text){
@@ -45,56 +45,34 @@ public class MainActivity extends AppCompatActivity {
         setTextHandler.sendMessage(msg1);
     }
 
-    private static String getFileType(String path){
-        File file = new File(path);
-        if(file.isFile()){
-            return "file";
-        }
-        if(file.isDirectory()){
-            return "directory";
-        }
-        if(file.exists()){
-            return "exists";
-        }
-        return "does not exist";
-    }
-
-    private static void exec(String command) throws IOException {
-        Runtime.getRuntime().exec(command);
-    }
-
-    private class MyThread extends Thread
-    {
-        public void run(){
-            try{
-                Process p = Runtime.getRuntime().exec("su");
-                DataOutputStream os = new DataOutputStream(p.getOutputStream());
-                os.writeBytes("chmod 777 /dev/input/*\n");
-                os.writeBytes("exit\n");
-                os.flush();
-                os.close();
-                try {
-                    p.waitFor();
-                } catch (InterruptedException e) {
-                    setText("waitFor:" + e.toString());
-                }
-
-                final String eventname = idev();
-
-                while(true){
-                    Thread.sleep(1);
-                    String str1 = stringFromJNI(eventname);
-                    System.out.println("keypad pressed: " + str1);
-                    setText(str1);
-                }
-
+    public void eventloop(){
+        try{
+            Process p = Runtime.getRuntime().exec("su");
+            DataOutputStream os = new DataOutputStream(p.getOutputStream());
+            os.writeBytes("chmod 777 /dev/input/*\n");
+            os.writeBytes("exit\n");
+            os.flush();
+            os.close();
+            try {
+                p.waitFor();
+            } catch (InterruptedException e) {
+                setText("waitFor:" + e.toString());
             }
-            catch(Exception e){
-                setText("run:"+e.toString());
+
+            final String eventname = idev();
+
+            while(true){
+                Thread.sleep(1);
+                String str1 = stringFromJNI(eventname);
+                System.out.println("keypad pressed: " + str1);
+                setText(str1);
             }
+
+        }
+        catch(Exception e){
+            setText("run:"+e.toString());
         }
     }
-
 
     private class SetTextHandler extends Handler
     {
