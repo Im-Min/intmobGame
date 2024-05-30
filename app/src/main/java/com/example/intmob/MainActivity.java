@@ -1,18 +1,12 @@
 package com.example.intmob;
 
-import static java.lang.Thread.*;
-import androidx.annotation.*;
 import androidx.appcompat.app.*;
 import android.os.*;
 import android.widget.*;
 import com.example.intmob.databinding.*;
 import java.io.*;
 import java.lang.Process;
-import java.nio.file.*;
-import java.nio.file.attribute.*;
-import java.nio.file.*;
-import java.nio.file.attribute.*;
-import java.util.*;
+import java.util.Objects;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -53,10 +47,11 @@ public class MainActivity extends AppCompatActivity {
             os.writeBytes("exit\n");
             os.flush();
             os.close();
+
             try {
                 p.waitFor();
             } catch (InterruptedException e) {
-                setText("waitFor:" + e.toString());
+                System.err.println(e);
             }
 
             final String eventname = idev();
@@ -64,13 +59,70 @@ public class MainActivity extends AppCompatActivity {
             while(true){
                 Thread.sleep(1);
                 String str1 = stringFromJNI(eventname);
-                System.out.println("keypad pressed: " + str1);
-                setText(str1);
+                System.out.println("keypad pressed: '" + str1 + "'");
+                handleKeypadInput(str1);
             }
-
         }
         catch(Exception e){
-            setText("run:"+e.toString());
+            System.err.println(e);
+        }
+    }
+
+    void handleKeypadInput(String key){
+        // keypad:
+        // 1 2 3 X
+        // 4 5 6 X
+        // 7 8 9 X
+        // X 0 X A
+
+        // X is an unused key.
+
+        if(Objects.equals(key, "1")){
+            // 1
+            setText("↖");
+        }
+        else if(Objects.equals(key, "2")){
+            // 2
+            setText("^");
+        }
+        else if(Objects.equals(key, "3")){
+            // 3
+
+        }
+        else if(Objects.equals(key, "4")){
+            // 4
+
+        }
+        else if(Objects.equals(key, "5")){
+            // 5
+
+        }
+        else if(Objects.equals(key, "6")){
+            // 6
+
+        }
+        else if("7".equals(key)){
+            // 7
+
+        }
+        else if(Objects.equals(key, "8")){
+            // 8
+            setText("v");
+        }
+        else if(Objects.equals(key, "9")){
+            // 9
+            setText("↘");
+        }
+        else if(Objects.equals(key, ":")){
+            // 0
+
+        }
+        else if(Objects.equals(key, "=")){
+            // A
+            setText("A");
+        }
+        else{
+            System.err.println("Unhandled keypad input occured! key='"+key+"', length="+key.length());
         }
     }
 
