@@ -162,3 +162,99 @@ public class MainActivity extends AppCompatActivity {
     private native String idev();
 
 }
+
+
+/*
+package com.example.pacman;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import android.opengl.GLSurfaceView;
+import android.os.Bundle;
+import android.view.Surface;
+import android.view.SurfaceHolder;
+import android.view.SurfaceView;
+import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
+import android.widget.Button;
+import android.widget.ImageButton;
+
+import javax.microedition.khronos.egl.EGLConfig;
+import javax.microedition.khronos.opengles.GL10;
+
+
+
+public class MainActivity extends AppCompatActivity {
+
+    private GLSurfaceView glSurfaceView;
+
+    static {
+        System.loadLibrary("pacman");
+    }
+
+    private native void init();
+    private native void step();
+    private native void setDirection(int direction);
+    private native void setOrthographicMatrix(int width, int height);
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        requestWindowFeature(Window.FEATURE_NO_TITLE);
+
+        setContentView(R.layout.activity_main);
+
+        glSurfaceView = findViewById(R.id.glSurfaceView);
+        glSurfaceView.setEGLContextClientVersion(2);
+        glSurfaceView.setRenderer(new GLSurfaceView.Renderer() {
+            @Override
+            public void onSurfaceCreated(GL10 gl, EGLConfig config) {
+                init();
+            }
+
+            @Override
+            public void onSurfaceChanged(GL10 gl, int width, int height) {
+                gl.glViewport(0, 0, width, height);
+                setOrthographicMatrix(width, height);
+            }
+
+            @Override
+            public void onDrawFrame(GL10 gl) {
+                step();
+            }
+        });
+
+        Button buttonUp = findViewById(R.id.button_up);
+        Button buttonDown = findViewById(R.id.button_down);
+        Button buttonLeft = findViewById(R.id.button_left);
+        Button buttonRight = findViewById(R.id.button_right);
+
+        buttonUp.setOnClickListener(v -> setDirection(0));
+        buttonDown.setOnClickListener(v -> setDirection(1));
+        buttonLeft.setOnClickListener(v -> setDirection(2));
+        buttonRight.setOnClickListener(v -> setDirection(3));
+
+
+
+    }
+
+    protected void onResume() {
+        super.onResume();
+        enterFullScreenMode();
+    }
+
+    private void enterFullScreenMode() {
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        getWindow().getDecorView().setSystemUiVisibility(
+                View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
+                | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                | View.SYSTEM_UI_FLAG_FULLSCREEN
+                | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                | View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+        );
+    }
+}*/
