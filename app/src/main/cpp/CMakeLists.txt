@@ -28,7 +28,9 @@ add_library(${CMAKE_PROJECT_NAME} SHARED
         # List C/C++ source files with relative paths to this CMakeLists.txt.
         native-lib.cpp
         graphic.cpp
-        idev.cpp)
+        idev.cpp
+        #play.cpp
+)
 
 # Check if the ANDROID_NDK_HOME environment variable is set
 if (NOT ANDROID_NDK)

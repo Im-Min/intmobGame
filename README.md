@@ -1,5 +1,11 @@
 ﻿# intmobGame (incomplete)
 
+## Description
+Pacman game implementation.
+
+## Hardware
+Hanback Electronics SM5S4210 Android 4.1 ("Jelly Bean") ; API 16 ; arm
+
 ## TODO
 - [ ] (YouTube) Short Video Demo Clip
 - [ ] (GitHub) Repo

@@ -17,6 +17,8 @@
 #include <errno.h>
 #include <sys/stat.h>
 
+
+
 typedef struct input_event {
     struct timeval time;
     unsigned short type;
@@ -24,10 +26,13 @@ typedef struct input_event {
     unsigned int value;
 } input_event;
 
+
+
 #ifdef __cplusplus
 extern "C"
 {
 #endif
+
 
 
 const char* concat(const char *s1, const char *s2)
@@ -42,17 +47,6 @@ const char* concat(const char *s1, const char *s2)
 const char* concatd(const char* eventname){
     const char* INPUT = "/dev/input/";
     return concat(INPUT, eventname);
-}
-
-int chmod777(const char* path){
-    char mode[] = "0777";
-    int i;
-    i = strtol(mode, 0, 8);
-    if (chmod (path,i) < 0)
-    {
-        return errno;
-    }
-    return(0);
 }
 
 JNIEXPORT jstring JNICALL Java_com_example_intmob_MainActivity_stringFromJNI(
@@ -94,6 +88,10 @@ JNIEXPORT void JNICALL Java_com_example_intmob_MainActivity_div0(JNIEnv *env, jo
     i /= i;
 }
 
+
+
 #ifdef __cplusplus
 }
 #endif
+
+
