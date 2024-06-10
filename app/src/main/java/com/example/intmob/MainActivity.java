@@ -6,7 +6,6 @@ import android.os.Handler;
 import android.os.Message;
 import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
-import com.example.intmob.databinding.ActivityMainBinding;
 import java.io.DataOutputStream;
 import java.lang.Process;
 import java.util.Objects;
@@ -27,18 +26,12 @@ public class MainActivity extends AppCompatActivity {
         System.loadLibrary("intmob");
     }
 
-    private ActivityMainBinding binding;
     private Thread thread;
-    private SetTextHandler setTextHandler;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
-
-        binding = ActivityMainBinding.inflate(getLayoutInflater());
-
-        setTextHandler = new SetTextHandler();
 
         thread = new Thread(this::eventloop);
         thread.start();
@@ -48,14 +41,10 @@ public class MainActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_main);
 
-
-
         glSurfaceView = findViewById(R.id.glSurfaceView);
         if(glSurfaceView == null){
             throw new RuntimeException("[ERROR] glSurfaceView is null!");
         }
-
-
 
         glSurfaceView.setEGLContextClientVersion(2);
         glSurfaceView.setRenderer(new GLSurfaceView.Renderer() {
@@ -85,7 +74,6 @@ public class MainActivity extends AppCompatActivity {
         buttonDown.setOnClickListener(v -> setDirection(1));
         buttonLeft.setOnClickListener(v -> setDirection(2));
         buttonRight.setOnClickListener(v -> setDirection(3));
-
     }
 
     protected void onPause() {
@@ -97,10 +85,6 @@ public class MainActivity extends AppCompatActivity {
         super.onResume();
         glSurfaceView.onResume();
         enterFullScreenMode();
-    }
-    private void setText(Object text){
-        Message msg1 = setTextHandler.obtainMessage(0, text);
-        setTextHandler.sendMessage(msg1);
     }
 
     private void printex(Exception ex){
@@ -163,58 +147,46 @@ public class MainActivity extends AppCompatActivity {
 
         if(Objects.equals(key, "1")){
             // 1
-            setText("↖");
         }
         else if(Objects.equals(key, "2")){
             // 2
-            setText("^");
+            setDirection(0);
         }
         else if(Objects.equals(key, "3")){
             // 3
         }
         else if(Objects.equals(key, "4")){
             // 4
+            setDirection(2);
         }
         else if(Objects.equals(key, "5")){
             // 5
+            setDirection(1);
         }
         else if(Objects.equals(key, "6")){
             // 6
+            setDirection(3);
         }
         else if("7".equals(key)){
             // 7
-
         }
         else if(Objects.equals(key, "8")){
             // 8
-            setText("v");
         }
         else if(Objects.equals(key, "9")){
             // 9
-            setText("↘");
         }
         else if(Objects.equals(key, ":")){
             // 0
-
         }
         else if(Objects.equals(key, "=")){
             // A
-            setText("A");
         }
         else{
-            System.err.println("Unhandled keypad input occured! key='"+key+"', length="+key.length());
+            System.err.println("[ERROR] Unhandled keypad input occured! key='"+key+"', length="+key.length());
             return 1;
         }
         return 0;
-    }
-    private class SetTextHandler extends Handler
-    {
-        public void handleMessage(Message msg ){
-            TextView v = binding.sampleText;
-            Object obj = msg.obj;
-            String sobj = obj.toString();
-            v.setText(sobj);
-        }
     }
 
     private void enterFullScreenMode() {
