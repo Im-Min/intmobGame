@@ -4,6 +4,7 @@
 #include <EGL/egl.h>
 #include <EGL/eglext.h>
 #include <string>
+#include <string.h>
 #include "Pacman.h"
 #include "Pacman.cpp"
 #include "Ghost.h"
@@ -49,7 +50,7 @@ void setOrthographicMatrix(float *matrix, float left, float right, float bottom,
 
 
 extern "C" JNIEXPORT void JNICALL
-Java_com_example_pacman_MainActivity_init(JNIEnv* env, jobject /* this */) {
+Java_com_example_intmob_MainActivity_init(JNIEnv* env, jobject /* this */) {
     // OpenGL ES 초기화 코드
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
     pacman = new Pacman();
@@ -63,7 +64,7 @@ Java_com_example_pacman_MainActivity_init(JNIEnv* env, jobject /* this */) {
 }
 
 extern "C" JNIEXPORT void JNICALL
-Java_com_example_pacman_MainActivity_step(JNIEnv* env, jobject /* this */) {
+Java_com_example_intmob_MainActivity_step(JNIEnv* env, jobject /* this */) {
     float tempMatrix[16];
     multiplyMatrices(tempMatrix, viewMatrix, modelMatrix);
     multiplyMatrices(mvpMatrix, projectionMatrix, tempMatrix);
@@ -81,7 +82,7 @@ Java_com_example_pacman_MainActivity_step(JNIEnv* env, jobject /* this */) {
 
 extern "C"
 JNIEXPORT void JNICALL
-Java_com_example_pacman_MainActivity_setOrthographicMatrix(JNIEnv *env, jobject thiz, jint width, jint height) {
+Java_com_example_intmob_MainActivity_setOrthographicMatrix(JNIEnv *env, jobject thiz, jint width, jint height) {
     // TODO: implement setOrthographicMatrix()
     //setOrthographicMatrix(projectionMatrix, -1.0f, 1.0f, -1.0f * height / width, 1.0f * height / width, -1.0f, 1.0f);
     /*float ratio = (float)height / (float)width;
@@ -106,7 +107,7 @@ Java_com_example_pacman_MainActivity_setOrthographicMatrix(JNIEnv *env, jobject 
 }
 extern "C"
 JNIEXPORT void JNICALL
-Java_com_example_pacman_MainActivity_setDirection(JNIEnv *env, jobject thiz, jint direction) {
+Java_com_example_intmob_MainActivity_setDirection(JNIEnv *env, jobject thiz, jint direction) {
     // TODO: implement setDirection()
     pacman->setDirection(direction);
 }

@@ -103,20 +103,31 @@ public class MainActivity extends AppCompatActivity {
         setTextHandler.sendMessage(msg1);
     }
 
-    public void eventloop(){
-        try{
+    private void printex(Exception ex){
+        System.err.println(ex.toString());
+    }
+
+    private int chmod777() {
+        try {
             Process p = Runtime.getRuntime().exec("su");
             DataOutputStream os = new DataOutputStream(p.getOutputStream());
             os.writeBytes("chmod 777 /dev/input/*\n");
             os.writeBytes("exit\n");
             os.flush();
             os.close();
+            p.waitFor();
+        }
+        catch(Exception ex){
+            printex(ex);
+            return 1;
+        }
+        return 0;
+    }
 
-
-            try {
-                p.waitFor();
-            } catch (InterruptedException e) {
-                System.err.println(e);
+    public void eventloop(){
+        try{
+            if(chmod777() != 0){
+                return;
             }
 
             final String eventname = idev();
@@ -124,17 +135,20 @@ public class MainActivity extends AppCompatActivity {
             while(true){
                 Thread.sleep(1);
                 String str1 = stringFromJNI(eventname);
+
                 if(Objects.equals(str1, "open:Permisson denied")){
+                    // if permission denied while opening a device
                     return;
                 }
+
                 System.out.println("keypad pressed: '" + str1 + "'");
                 if(handleKeypadInput(str1) != 0){
                     return;
                 }
             }
         }
-        catch(Exception e){
-            System.err.println(e);
+        catch(Exception ex){
+            printex(ex);
         }
     }
 
