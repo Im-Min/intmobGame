@@ -29,7 +29,7 @@ Pacman::Pacman() {
     direction = -1;
     initShaders();
 
-    radius = 0.04f;
+    radius = 0.07f;
 
     GLfloat vertices[(numSegments+2)*3];
 
