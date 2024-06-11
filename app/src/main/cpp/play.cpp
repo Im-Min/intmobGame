@@ -53,68 +53,88 @@ void setOrthographicMatrix(float *matrix, float left, float right, float bottom,
 }
 
 
-extern "C" JNIEXPORT void JNICALL
+extern "C" JNIEXPORT jint JNICALL
 Java_com_example_intmob_MainActivity_init(JNIEnv* env, jobject /* this */) {
-    // OpenGL ES 초기화 코드
-    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-    pacman = new Pacman();
-    ghost = new Ghost();
-    map = new Map();
-    ghost->setPosition(0.0f, 0.5f);
+    try {
+        // OpenGL ES 초기화 코드
+        glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+        pacman = new Pacman();
+        ghost = new Ghost();
+        map = new Map();
+        ghost->setPosition(0.0f, 0.5f);
 
-    setIdentityMatrix(projectionMatrix);
-    setIdentityMatrix(viewMatrix);
-    setIdentityMatrix(modelMatrix);
-    setIdentityMatrix(mvpMatrix);
+        setIdentityMatrix(projectionMatrix);
+        setIdentityMatrix(viewMatrix);
+        setIdentityMatrix(modelMatrix);
+        setIdentityMatrix(mvpMatrix);
+    }
+    catch(...){
+        return 1;
+    }
+    return 0;
 }
 
-extern "C" JNIEXPORT void JNICALL
+extern "C" JNIEXPORT jint JNICALL
 Java_com_example_intmob_MainActivity_step(JNIEnv* env, jobject /* this */) {
-    float tempMatrix[16];
-    multiplyMatrices(tempMatrix, viewMatrix, modelMatrix);
-    multiplyMatrices(mvpMatrix, projectionMatrix, tempMatrix);
+    try {
+        float tempMatrix[16];
+        multiplyMatrices(tempMatrix, viewMatrix, modelMatrix);
+        multiplyMatrices(mvpMatrix, projectionMatrix, tempMatrix);
 
-    // Pacman 렌더링 및 게임 로직 업데이트 코드
-    glClear(GL_COLOR_BUFFER_BIT);
-    map->drawMap(mvpMatrix);
-    pacman->move();
-    pacman->draw(mvpMatrix);
+        // Pacman 렌더링 및 게임 로직 업데이트 코드
+        glClear(GL_COLOR_BUFFER_BIT);
+        map->drawMap(mvpMatrix);
+        pacman->move();
+        pacman->draw(mvpMatrix);
 
-    ghost->move();
-    ghost->draw(mvpMatrix);
+        ghost->move();
+        ghost->draw(mvpMatrix);
 
-    if (checkCollision(pacman->getPosition().x, pacman->getPosition().y, ghost->getPosition().x, ghost->getPosition().y, 0.1f)){
-        printf("Game Over\n");
-        exit(0);
+        if (checkCollision(pacman->getPosition().x, pacman->getPosition().y, ghost->getPosition().x,
+                           ghost->getPosition().y, 0.1f)) {
+            return 2;
+        }
     }
+    catch(...){
+        return 1;
+    }
+    return 0;
 }
 
 
 
 extern "C"
-JNIEXPORT void JNICALL
+JNIEXPORT jint JNICALL
 Java_com_example_intmob_MainActivity_setOrthographicMatrix(JNIEnv *env, jobject thiz, jint width, jint height) {
     // TODO: implement setOrthographicMatrix()
     //setOrthographicMatrix(projectionMatrix, -1.0f, 1.0f, -1.0f * height / width, 1.0f * height / width, -1.0f, 1.0f);
     /*float ratio = (float)height / (float)width;
     setOrthographicMatrix(projectionMatrix, -1.0f, 1.0f, -1.0f * ratio, 1.0f * ratio, -1.0f, 1.0f);
 */    //pacman->setBounds(ratio);
-    float aspectRatio = (float)width / (float)height;
-    float left, right, bottom, top;
-    if (aspectRatio > 1.0f) {
-        left = -aspectRatio;
-        right = aspectRatio;
-        bottom = -1.0f;
-        top = 1.0f;
-    } else {
-        left = -1.0f;
-        right = 1.0f;
-        bottom = -1.0f / aspectRatio;
-        top = 1.0f / aspectRatio;
+    try {
+
+
+        float aspectRatio = (float) width / (float) height;
+        float left, right, bottom, top;
+        if (aspectRatio > 1.0f) {
+            left = -aspectRatio;
+            right = aspectRatio;
+            bottom = -1.0f;
+            top = 1.0f;
+        } else {
+            left = -1.0f;
+            right = 1.0f;
+            bottom = -1.0f / aspectRatio;
+            top = 1.0f / aspectRatio;
+        }
+        setOrthographicMatrix(projectionMatrix, left, right, bottom, top, -1.0f, 1.0f);
+        pacman->setBounds(left, right, bottom, top);
+        ghost->setBounds(left, right, bottom, top);
     }
-    setOrthographicMatrix(projectionMatrix, left, right, bottom, top, -1.0f, 1.0f);
-    pacman->setBounds(left, right, bottom, top);
-    ghost->setBounds(left, right, bottom, top);
+    catch(...){
+        return 1;
+    }
+    return 0;
 }
 extern "C"
 JNIEXPORT jint JNICALL
