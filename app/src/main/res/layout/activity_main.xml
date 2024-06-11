@@ -4,8 +4,9 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/black"
-    tools:context=".MainActivity">
+    android:background="#000000"
+    tools:context=".MainActivity"
+    >
 
     <android.opengl.GLSurfaceView
         android:id="@+id/glSurfaceView"
@@ -19,55 +20,11 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/app_name"
-        android:textColor="@color/white"
+        android:textColor="#FFFFFF"
         android:textSize="60sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
-
-    <Button
-        android:id="@+id/button_up"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="156dp"
-        android:layout_marginLeft="156dp"
-        android:layout_marginTop="168dp"
-        android:text="@string/app_name"
-        app:layout_constraintStart_toStartOf="@+id/glSurfaceView"
-        app:layout_constraintTop_toTopOf="@+id/glSurfaceView" />
-
-    <Button
-        android:id="@+id/button_down"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="159dp"
-        android:layout_marginLeft="159dp"
-        android:layout_marginBottom="186dp"
-        android:text="@string/app_name"
-        app:layout_constraintBottom_toBottomOf="@+id/glSurfaceView"
-        app:layout_constraintStart_toStartOf="@+id/glSurfaceView" />
-
-    <Button
-        android:id="@+id/button_left"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="19dp"
-        android:layout_marginLeft="19dp"
-        android:layout_marginTop="340dp"
-        android:text="@string/app_name"
-        app:layout_constraintStart_toStartOf="@+id/glSurfaceView"
-        app:layout_constraintTop_toTopOf="@+id/glSurfaceView" />
-
-    <Button
-        android:id="@+id/button_right"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="341dp"
-        android:layout_marginEnd="16dp"
-        android:layout_marginRight="16dp"
-        android:text="@string/app_name"
-        app:layout_constraintEnd_toEndOf="@+id/glSurfaceView"
-        app:layout_constraintTop_toTopOf="@+id/glSurfaceView" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

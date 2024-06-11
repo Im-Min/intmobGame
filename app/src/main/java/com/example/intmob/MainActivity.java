@@ -34,8 +34,7 @@ public class MainActivity extends AppCompatActivity {
 
         super.onCreate(savedInstanceState);
 
-        Thread thread = new Thread(this::eventloop);
-        thread.start();
+        new Thread(this::eventloop).start();
 
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -65,16 +64,6 @@ public class MainActivity extends AppCompatActivity {
                 step();
             }
         });
-
-        Button buttonUp = findViewById(R.id.button_up);
-        Button buttonDown = findViewById(R.id.button_down);
-        Button buttonLeft = findViewById(R.id.button_left);
-        Button buttonRight = findViewById(R.id.button_right);
-
-        buttonUp.setOnClickListener(v -> setDirection(0));
-        buttonDown.setOnClickListener(v -> setDirection(1));
-        buttonLeft.setOnClickListener(v -> setDirection(2));
-        buttonRight.setOnClickListener(v -> setDirection(3));
     }
 
     protected void onPause() {
@@ -153,22 +142,30 @@ public class MainActivity extends AppCompatActivity {
         }
         else if(Objects.equals(key, "2")){
             // 2
-            setDirection(0);
+            if(setDirection(0) != 0){
+                System.err.println("setDirection error");
+            }
         }
         else if(Objects.equals(key, "3")){
             // 3
         }
         else if(Objects.equals(key, "4")){
             // 4
-            setDirection(2);
+            if(setDirection(2) != 0){
+                System.err.println("setDirection error");
+            }
         }
         else if(Objects.equals(key, "5")){
             // 5
-            setDirection(1);
+            if(setDirection(1) != 0){
+                System.err.println("setDirection error");
+            }
         }
         else if(Objects.equals(key, "6")){
             // 6
-            setDirection(3);
+            if(setDirection(3) != 0){
+                System.err.println("setDirection error");
+            }
         }
         else if("7".equals(key)){
             // 7
@@ -213,7 +210,7 @@ public class MainActivity extends AppCompatActivity {
     private native String idev();
     private native void init();
     private native void step();
-    private native void setDirection(int direction);
+    private native int setDirection(int direction);
     private native void setOrthographicMatrix(int width, int height);
 
 }

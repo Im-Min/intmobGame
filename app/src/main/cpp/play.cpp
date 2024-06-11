@@ -117,8 +117,14 @@ Java_com_example_intmob_MainActivity_setOrthographicMatrix(JNIEnv *env, jobject 
     ghost->setBounds(left, right, bottom, top);
 }
 extern "C"
-JNIEXPORT void JNICALL
+JNIEXPORT jint JNICALL
 Java_com_example_intmob_MainActivity_setDirection(JNIEnv *env, jobject thiz, jint direction) {
     // TODO: implement setDirection()
-    pacman->setDirection(direction);
+    try {
+        pacman->setDirection(direction);
+    }
+    catch(...){
+        return 1;
+    }
+    return 0;
 }
