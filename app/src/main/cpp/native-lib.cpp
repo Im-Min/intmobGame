@@ -83,9 +83,10 @@ JNIEXPORT jstring JNICALL Java_com_example_intmob_MainActivity_stringFromJNI(
     return env->NewStringUTF(result);
 }
 
-JNIEXPORT void JNICALL Java_com_example_intmob_MainActivity_div0(JNIEnv *env, jobject mainActivity){
+JNIEXPORT jint JNICALL Java_com_example_intmob_MainActivity_div0(JNIEnv *env, jobject mainActivity){
     int i = 0;
     i /= i;
+    return 2;
 }
 
 

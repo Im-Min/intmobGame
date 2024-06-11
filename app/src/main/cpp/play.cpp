@@ -22,7 +22,6 @@ float viewMatrix[16];
 float modelMatrix[16];
 float mvpMatrix[16];
 
-
 void multiplyMatrices(float *result, const float *a, const float *b) {
     for (int i = 0; i < 4; ++i) {
         for (int j = 0; j < 4; ++j) {
@@ -60,7 +59,9 @@ Java_com_example_intmob_MainActivity_init(JNIEnv* env, jobject /* this */) {
         glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
         pacman = new Pacman();
         ghost = new Ghost();
-        map = new Map();
+
+        //map = new Map();
+
         ghost->setPosition(0.0f, 0.5f);
 
         setIdentityMatrix(projectionMatrix);
@@ -83,7 +84,9 @@ Java_com_example_intmob_MainActivity_step(JNIEnv* env, jobject /* this */) {
 
         // Pacman 렌더링 및 게임 로직 업데이트 코드
         glClear(GL_COLOR_BUFFER_BIT);
-        map->drawMap(mvpMatrix);
+
+        //map->drawMap(mvpMatrix);
+
         pacman->move();
         pacman->draw(mvpMatrix);
 
@@ -92,6 +95,8 @@ Java_com_example_intmob_MainActivity_step(JNIEnv* env, jobject /* this */) {
 
         if (checkCollision(pacman->getPosition().x, pacman->getPosition().y, ghost->getPosition().x,
                            ghost->getPosition().y, 0.1f)) {
+            printf("Game Over\n");
+            exit(0);
             return 2;
         }
     }
@@ -136,6 +141,7 @@ Java_com_example_intmob_MainActivity_setOrthographicMatrix(JNIEnv *env, jobject 
     }
     return 0;
 }
+
 extern "C"
 JNIEXPORT jint JNICALL
 Java_com_example_intmob_MainActivity_setDirection(JNIEnv *env, jobject thiz, jint direction) {

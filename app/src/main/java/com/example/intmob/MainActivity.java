@@ -29,6 +29,8 @@ public class MainActivity extends AppCompatActivity {
 
         super.onCreate(savedInstanceState);
 
+        System.out.println("test: " + div0());
+
         new Thread(this::eventloop).start();
 
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
@@ -214,5 +216,5 @@ public class MainActivity extends AppCompatActivity {
     private native int step();
     private native int setDirection(int direction);
     private native int setOrthographicMatrix(int width, int height);
-
+    private native int div0();
 }
