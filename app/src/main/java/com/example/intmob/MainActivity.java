@@ -1,10 +1,13 @@
 package com.example.intmob;
 
 import android.opengl.GLSurfaceView;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.widget.TextView;
+
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import java.io.DataOutputStream;
 import java.lang.Process;
@@ -26,14 +29,12 @@ public class MainActivity extends AppCompatActivity {
         System.loadLibrary("intmob");
     }
 
-    private Thread thread;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
 
-        thread = new Thread(this::eventloop);
+        Thread thread = new Thread(this::eventloop);
         thread.start();
 
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
@@ -84,7 +85,9 @@ public class MainActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         glSurfaceView.onResume();
-        enterFullScreenMode();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            enterFullScreenMode();
+        }
     }
 
     private void printex(Exception ex){
@@ -189,6 +192,7 @@ public class MainActivity extends AppCompatActivity {
         return 0;
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     private void enterFullScreenMode() {
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         getWindow().getDecorView().setSystemUiVisibility(
