@@ -9,9 +9,13 @@
 #include "Pacman.cpp"
 #include "Ghost.h"
 #include "Ghost.cpp"
+#include "controller.cpp"
+#include "Map.h"
+#include "Map.cpp"
 
 Pacman *pacman;
 Ghost *ghost;
+Map *map;
 
 float projectionMatrix[16];
 float viewMatrix[16];
@@ -55,6 +59,7 @@ Java_com_example_intmob_MainActivity_init(JNIEnv* env, jobject /* this */) {
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
     pacman = new Pacman();
     ghost = new Ghost();
+    map = new Map();
     ghost->setPosition(0.0f, 0.5f);
 
     setIdentityMatrix(projectionMatrix);
@@ -71,11 +76,17 @@ Java_com_example_intmob_MainActivity_step(JNIEnv* env, jobject /* this */) {
 
     // Pacman 렌더링 및 게임 로직 업데이트 코드
     glClear(GL_COLOR_BUFFER_BIT);
+    map->drawMap(mvpMatrix);
     pacman->move();
     pacman->draw(mvpMatrix);
 
     ghost->move();
     ghost->draw(mvpMatrix);
+
+    if (checkCollision(pacman->getPosition().x, pacman->getPosition().y, ghost->getPosition().x, ghost->getPosition().y, 0.1f)){
+        printf("Game Over\n");
+        exit(0);
+    }
 }
 
 
