@@ -31,6 +31,7 @@ add_library(${CMAKE_PROJECT_NAME} SHARED
         idev.cpp
         play.cpp
         7segment.c
+        textlcd.c
 )
 
 # Check if the ANDROID_NDK_HOME environment variable is set

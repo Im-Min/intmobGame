@@ -52,6 +52,9 @@ public class MainActivity extends AppCompatActivity {
         // Thread Start
         thread.setDaemon(true);
         thread.start();
+        System.out.println("BackThread started");
+
+        TextLCD.UpdateValue(1);
 
         new Thread(this::eventloop).start();
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
@@ -113,7 +116,7 @@ public class MainActivity extends AppCompatActivity {
 
                 while(!stop) {
                     String data = String.format("%06d", count);
-                    SegmentControl(data);
+                    Segment.SegmentControl(data);
                     sleep(1);
                 }
 
@@ -348,5 +351,4 @@ public class MainActivity extends AppCompatActivity {
     private native int setDirection(int direction);
     private native int setOrthographicMatrix(int width, int height);
     private native int div0();
-    native int SegmentControl(String value);
 }

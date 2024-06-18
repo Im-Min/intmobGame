@@ -13,7 +13,7 @@
 #include <android/log.h>
 
 jint
-Java_com_example_intmob_MainActivity_SegmentControl(JNIEnv* env,
+Java_com_example_intmob_Segment_SegmentControl(JNIEnv* env,
                                                     jobject thiz, jstring data){
     int dev, ret;
     dev = open("/dev/fpga_segment", O_RDWR|O_SYNC);
