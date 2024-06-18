@@ -28,10 +28,7 @@ import javax.microedition.khronos.opengles.GL10;
 
 public class MainActivity extends AppCompatActivity {
     BackThread thread = new BackThread();
-    protected static final int THREAD_FLAGS_PRINT = 0; // Countdown
-    protected static final int THREAD_FLAGS_CLOCK = 1; // Clock
     protected static final int DIALOG_SIMPLE_MESSAGE = 1;
-    int flag = -1;
     boolean stop = false;
     int count = 0;
     private GLSurfaceView glSurfaceView;
@@ -113,58 +110,27 @@ public class MainActivity extends AppCompatActivity {
     class BackThread extends Thread{
         public void run(){
             try{
+
                 while(!stop) {
-                    switch (flag) {
-                        default:
-                            // do nothing
-                            break;
-                        case THREAD_FLAGS_PRINT:
-                            // Countdown
-                            while (count > 0 && flag == THREAD_FLAGS_PRINT) {
-                                for (int i = 0; i < 14 && flag == THREAD_FLAGS_PRINT; ) {
-                                    SegmentControl(String.valueOf(count));
-                                    Thread.sleep(20);
-                                }
-                                Thread.sleep(1000);
-                                count--;
-                            }
-                            // flag = 0;
-                            break;
-
-                        case THREAD_FLAGS_CLOCK:
-                            // Clock
-                            int result = 0;
-
-                            Date t = new Date();
-                            t.setTime(System.currentTimeMillis());
-                            result = t.getHours() * 10000 + t.getMinutes() * 100 + t.getSeconds();
-                            if (result >= 1000000) {
-                                System.err.println("err:BackThread:result >= 1000000");
-                                throw new RuntimeException();
-                            }
-                            for (int i = 0; i < 20; i++) {
-                                SegmentControl(String.valueOf(result));
-                                Thread.sleep(20);
-                            }
-                            break;
-                    }
+                    String data = String.format("%06d", count);
+                    SegmentControl(data);
                     sleep(1);
                 }
 
-                } catch (InterruptedException e) {
-                    System.out.println("BackThread:Interrupted");
-                    return;
-                }
-
+            } catch (InterruptedException e) {
+                System.out.println("BackThread:Interrupted");
+                return;
             }
+
         }
+    }
 
 
     // Program exit
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
+        // KEYCODE_BACK is a back button on the table board.
         if(keyCode == KeyEvent.KEYCODE_BACK){
-            flag = -1;
             stop = true;
             thread.interrupt();
         }
@@ -188,6 +154,10 @@ public class MainActivity extends AppCompatActivity {
                 return d;
         }
         return super.onCreateDialog(id);
+    }
+
+    void setScore(int score){
+        count = score;
     }
 
     void OnPacmanGhostCollision(){
@@ -260,46 +230,13 @@ public class MainActivity extends AppCompatActivity {
             printex(ex);
         }
     }
-    static final int UP = 0;
-    static final int LEFT = 2;
-    int setDirectionUp(){
-        int ret = setDirection(UP);
-        if(ret != 0){
-            System.err.println("err:setDirection="+ret);
-        }
-        return ret;
-    }
-    int setDirectionLeft(){
-        int ret = setDirection(LEFT);
-        if(ret != 0){
-            System.err.println("err:setDirection="+ret);
-        }
-        return ret;
-    }
-    static final int DOWN = 1;
-    int setDirectionDown(){
-        int ret = setDirection(DOWN);
-        if(ret != 0){
-            System.err.println("err:setDirection="+ret);
-        }
-        return ret;
-    }
-    static final int RIGHT = 3;
-    int setDirectionRight(){
-        int ret = setDirection(RIGHT);
-        if(ret != 0){
-            System.err.println("err:setDirection="+ret);
-        }
-        return ret;
-    }
-    int handleKeypadInput(String key){
-        // keypad:
-        // 1 2 3 X
-        // 4 5 6 X
-        // 7 8 9 X
-        // X 0 X A
 
-        // X is an unused key.
+    int handleKeypadInput(String key){
+        // keypad key mapping:
+        // 1 2 3 ?
+        // 4 5 6 ?
+        // 7 8 9 ?
+        // ? 0 ? A
 
         if(Objects.equals(key, "1")){
             // 1
@@ -314,8 +251,8 @@ public class MainActivity extends AppCompatActivity {
         }
         else if(Objects.equals(key, "3")){
             // 3
-            count = 123456;
-            flag = THREAD_FLAGS_PRINT;
+            // test
+            setScore(98765);
         }
         else if(Objects.equals(key, "4")){
             // 4
@@ -331,11 +268,9 @@ public class MainActivity extends AppCompatActivity {
         }
         else if("7".equals(key)){
             // 7
-            flag = THREAD_FLAGS_CLOCK;
         }
         else if(Objects.equals(key, "8")){
             // 8
-            flag = -1;
         }
         else if(Objects.equals(key, "9")){
             // 9
@@ -367,7 +302,40 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    static final int UP = 0;
+    static final int DOWN = 1;
+    static final int LEFT = 2;
+    static final int RIGHT = 3;
+    int setDirectionUp(){
+        int ret = setDirection(UP);
+        if(ret != 0){
+            System.err.println("err:setDirection="+ret);
+        }
+        return ret;
+    }
+    int setDirectionLeft(){
+        int ret = setDirection(LEFT);
+        if(ret != 0){
+            System.err.println("err:setDirection="+ret);
+        }
+        return ret;
+    }
 
+
+    int setDirectionDown(){
+        int ret = setDirection(DOWN);
+        if(ret != 0){
+            System.err.println("err:setDirection="+ret);
+        }
+        return ret;
+    }
+    int setDirectionRight(){
+        int ret = setDirection(RIGHT);
+        if(ret != 0){
+            System.err.println("err:setDirection="+ret);
+        }
+        return ret;
+    }
 
     /**
      * A native method that is implemented by the 'intmob' native library,
