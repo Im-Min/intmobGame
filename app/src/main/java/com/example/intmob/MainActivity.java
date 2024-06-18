@@ -20,6 +20,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import java.io.DataOutputStream;
 import java.lang.Process;
+import java.util.Date;
 import java.util.Objects;
 
 import javax.microedition.khronos.egl.EGLConfig;
@@ -111,43 +112,53 @@ public class MainActivity extends AppCompatActivity {
 
     class BackThread extends Thread{
         public void run(){
-            while(!stop){
-                switch(flag){
-                    default:
-                        // do nothing
-                        break;
-                    case THREAD_FLAGS_PRINT:
-                        // Countdown
-                        SegmentIOControl(THREAD_FLAGS_PRINT);
-                        while(count > 0 && flag == THREAD_FLAGS_PRINT){
-                            for (int i=0;i<14&&flag == THREAD_FLAGS_PRINT;){
-                                SegmentControl(count);
+            try{
+                while(!stop) {
+                    switch (flag) {
+                        default:
+                            // do nothing
+                            break;
+                        case THREAD_FLAGS_PRINT:
+                            // Countdown
+                            while (count > 0 && flag == THREAD_FLAGS_PRINT) {
+                                for (int i = 0; i < 14 && flag == THREAD_FLAGS_PRINT; ) {
+                                    SegmentControl(String.valueOf(count));
+                                    Thread.sleep(20);
+                                }
+                                Thread.sleep(1000);
+                                count--;
                             }
-                            count--;
-                        }
-                        // flag = 0;
-                        break;
+                            // flag = 0;
+                            break;
 
-                    case THREAD_FLAGS_CLOCK:
-                        // Clock
-                        SegmentIOControl(THREAD_FLAGS_CLOCK);
-                        int result = 0;
+                        case THREAD_FLAGS_CLOCK:
+                            // Clock
+                            int result = 0;
 
-                        Time t = new Time();
-                        t.set(System.currentTimeMillis());
-                        result = t.hour * 10000 + t.minute * 100 + t.second;
-                        result += 1000000;
-                        for(int i=0;i<20;i++)
-                            SegmentControl(result);
-                        break;
-                }
-                try {
+                            Date t = new Date();
+                            t.setTime(System.currentTimeMillis());
+                            result = t.getHours() * 10000 + t.getMinutes() * 100 + t.getSeconds();
+                            if (result >= 1000000) {
+                                System.err.println("err:BackThread:result >= 1000000");
+                                throw new RuntimeException();
+                            }
+                            for (int i = 0; i < 20; i++) {
+                                SegmentControl(String.valueOf(result));
+                                Thread.sleep(20);
+                            }
+                            break;
+                    }
                     sleep(1);
-                } catch (InterruptedException e) {
                 }
+
+                } catch (InterruptedException e) {
+                    System.out.println("BackThread:Interrupted");
+                    return;
+                }
+
             }
         }
-    }
+
 
     // Program exit
     @Override
@@ -369,6 +380,5 @@ public class MainActivity extends AppCompatActivity {
     private native int setDirection(int direction);
     private native int setOrthographicMatrix(int width, int height);
     private native int div0();
-    native int SegmentControl(int value);
-    native int SegmentIOControl(int value);
+    native int SegmentControl(String value);
 }
