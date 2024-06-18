@@ -26,10 +26,7 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-
         super.onCreate(savedInstanceState);
-
-        System.out.println("test: " + div0());
 
         new Thread(this::eventloop).start();
 
@@ -63,11 +60,21 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onDrawFrame(GL10 gl) {
                 int ret = step();
-                if(ret != 0){
-                    System.out.println("step:" + ret);
+                if(ret == 2){
+                    // Ghost and Pacman collided
+                    OnPacmanGhostCollision();
                 }
             }
         });
+    }
+
+    void OnPacmanGhostCollision(){
+        // TODO
+        OnGameEnd();
+    }
+
+    void OnGameEnd(){
+        // TODO
     }
 
     protected void onPause() {
@@ -78,7 +85,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         glSurfaceView.onResume();
-            enterFullScreenMode();
+        enterFullScreenMode();
     }
 
     private void printex(Exception ex){
@@ -205,6 +212,8 @@ public class MainActivity extends AppCompatActivity {
             );
         }
     }
+
+
 
     /**
      * A native method that is implemented by the 'intmob' native library,

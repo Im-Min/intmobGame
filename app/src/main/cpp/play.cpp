@@ -95,8 +95,10 @@ Java_com_example_intmob_MainActivity_step(JNIEnv* env, jobject /* this */) {
 
         if (checkCollision(pacman->getPosition().x, pacman->getPosition().y, ghost->getPosition().x,
                            ghost->getPosition().y, 0.1f)) {
-            printf("Game Over\n");
-            exit(0);
+            //printf("Game Over\n");
+            //exit(0);
+
+            // Pacman and ghost have collision, return 2.
             return 2;
         }
     }
