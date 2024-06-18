@@ -5,14 +5,8 @@ public class TextLCD{
 
     static{
         System.loadLibrary("intmob");
-
-        // Test open (optional)
-        boolean ret = open();
-        if (!ret)
-            Log.d("TextLCD", "Open fail");
     }
 
-    public static native boolean open();
     public static native int control(String str, String str2);
     public static native int clear();
     public static native int IOCtlDisplay (boolean data);

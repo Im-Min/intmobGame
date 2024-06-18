@@ -17,6 +17,8 @@
 #define TEXTLCD_DD_ADDRESS _IOW(TEXTLCD_BASE, 7, int)
 #define TEXTLCD_WRITE_BYTE _IOW(TEXTLCD_BASE, 8, int)
 
+#define TEXTLCD "/dev/fpga_textlcd"
+
 int fd = -1;
 
 struct strcommand_variable{
@@ -60,7 +62,7 @@ void init(){
 int TextLCDIoctol(int cmd, char* buf){
     int ret, i;
 
-    if (fd < 0) fd = open("/dev/fpga_textlcd", O_WRONLY | O_NDELAY);
+    if (fd < 0) fd = open(TEXTLCD, O_WRONLY | O_NDELAY);
     if (fd < 0) return -errno;
 
     if (cmd == TEXTLCD_WRITE_BYTE) {
@@ -79,15 +81,10 @@ int TextLCDIoctol(int cmd, char* buf){
 
 
 
-#ifdef __cplusplus
-extern "C"
-{
-#endif
-
 JNIEXPORT jboolean
 JNICALL Java_com_example_intmob_TextLCD_open
         (JNIEnv *env, jobject obj) {
-    fd = open("/dev/fpga_textlcd", O_WRONLY | O_NDELAY);
+    fd = open(TEXTLCD, O_WRONLY | O_NDELAY);
     if (fd < 0) return -errno;
     else return 1;
 }
@@ -100,7 +97,7 @@ JNICALL Java_com_example_intmob_TextLCD_control
     char *buf0, *buf1;
     int ret;
 
-    if (fd < 0) fd = open("/dev/fpga_textlcd", O_WRONLY | O_NDELAY);
+    if (fd < 0) fd = open(TEXTLCD, O_WRONLY | O_NDELAY);
     if (fd < 0) return -errno;
 
     init();
@@ -175,6 +172,4 @@ JNIEXPORT jint JNICALL Java_com_example_intmob_TextLCD_IOCtlBlink
 
 }
 
-#ifdef __cplusplus
-}
-#endif
+
