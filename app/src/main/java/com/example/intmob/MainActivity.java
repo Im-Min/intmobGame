@@ -241,7 +241,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                 return;
             }
 
-            final String eventname = idev();
+            final String eventname = Keypad.getEventName();
 
             while(true){
                 Thread.sleep(1);
@@ -395,7 +395,6 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
      * A native method that is implemented by the 'intmob' native library,
      * which is packaged with this application.
      */
-    private native String idev();
     private native int init();
     private native int step();
     private native int setDirection(int direction);

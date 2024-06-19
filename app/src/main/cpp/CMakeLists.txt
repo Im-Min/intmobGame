@@ -27,7 +27,7 @@ project("intmob")
 add_library(${CMAKE_PROJECT_NAME} SHARED
         # List C/C++ source files with relative paths to this CMakeLists.txt.
         graphic.cpp
-        idev.cpp
+        fpga/idev.cpp
         play.cpp
         fpga/7segment.c
         fpga/textlcd.c

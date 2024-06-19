@@ -16,13 +16,12 @@
 #include "idev.h"
 
 #ifdef __cplusplus
-extern "C"
-{
+extern "C"{
 #endif
 
-JNIEXPORT jstring JNICALL Java_com_example_intmob_MainActivity_idev(
+JNIEXPORT jstring JNICALL Java_com_example_intmob_fpga_Keypad_idev(
         JNIEnv *env,
-        jobject mainActivity) {
+        jclass jc) {
 
     auto devices = idev::get_devices();
 
