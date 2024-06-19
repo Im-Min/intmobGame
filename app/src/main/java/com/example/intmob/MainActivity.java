@@ -32,15 +32,22 @@ public class MainActivity extends AppCompatActivity {
     boolean stop = false;
     int count = 0;
     private GLSurfaceView glSurfaceView;
+
     // Static block is only called once when the class itself is initialized.
     // Used to load the 'intmob' library on application startup.
-    static {System.loadLibrary("intmob");} // JNI Library Load
+    static {
+        System.out.println("loadLibrary++");
+        System.loadLibrary("intmob");
+        System.out.println("loadLibrary--");
+    } // JNI Library Load
 
     EventHandler m_eventHandler;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        System.out.println("super.onCreate++");
         super.onCreate(savedInstanceState);
+        System.out.println("super.onCreate--");
 
         // requestFeature() must be called before adding content
         requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -61,7 +68,7 @@ public class MainActivity extends AppCompatActivity {
 
         glSurfaceView = findViewById(R.id.glSurfaceView);
         if(glSurfaceView == null){
-            throw new RuntimeException("error:glSurfaceView is null");
+            throw new RuntimeException("err:glSurfaceView null");
         }
 
         glSurfaceView.setEGLContextClientVersion(2);
@@ -69,7 +76,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onSurfaceCreated(GL10 gl, EGLConfig config) {
                 if(init() != 0){
-                    System.err.println("err:jni function initialize fail");
+                    System.err.println("err:jni function init fail");
                 }
             }
 

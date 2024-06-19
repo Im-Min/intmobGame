@@ -73,30 +73,20 @@ int TextLCDIoctol(int cmd, char* buf){
     }else{
         ret = ioctl(fd, cmd, &strcommand, 32);
     }
+
     close(fd);
-    
+
     return ret;
 }
 
-
-
-JNIEXPORT jboolean
-JNICALL Java_com_example_intmob_TextLCD_open
-        (JNIEnv *env, jobject obj) {
-    fd = open(TEXTLCD, O_WRONLY | O_NDELAY);
-    if (fd < 0) return -errno;
-    else return 1;
-}
-
-
 JNIEXPORT jint
-JNICALL Java_com_example_intmob_TextLCD_control
+JNICALL Java_com_example_intmob_TextLCD_TextLCDOut
         (JNIEnv *env, jobject obj, jstring str, jstring str2) {
     jboolean iscopy;
     char *buf0, *buf1;
-    int ret;
+    int fd, ret;
 
-    if (fd < 0) fd = open(TEXTLCD, O_WRONLY | O_NDELAY);
+    fd = open(TEXTLCD, O_WRONLY | O_NDELAY);
     if (fd < 0) return -errno;
 
     initialize();
@@ -113,31 +103,15 @@ JNICALL Java_com_example_intmob_TextLCD_control
     ret = write(fd, buf1, strlen(buf1));
 
     close(fd);
-    fd = -1;
 
     return ret;
 }
 
 JNIEXPORT jint
-JNICALL Java_com_example_intmob_TextLCD_clear
+JNICALL Java_com_example_intmob_TextLCD_IOCtlClear
         (JNIEnv *env, jobject obj) {
     initialize();
     return TextLCDIoctol(TEXTLCD_CLEAR, NULL);
-}
-
-
-JNIEXPORT jint
-JNICALL Java_com_example_intmob_TextLCD_IOCtlDisplay
-        (JNIEnv *env, jobject obj, jboolean data) {
-    initialize();
-    if (data) {
-        strcommand.display_enable = 0x01;
-    } else {
-        strcommand.display_enable = 0x00;
-    }
-    close(fd);
-    return TextLCDIoctol(TEXTLCD_DISPLAY_CONTROL, NULL);
-
 }
 
 JNIEXPORT jint
@@ -148,27 +122,55 @@ JNICALL Java_com_example_intmob_TextLCD_IOCtlReturnHome
 }
 
 JNIEXPORT jint
+JNICALL Java_com_example_intmob_TextLCD_IOCtlDisplay
+        (JNIEnv *env, jobject obj, jboolean data) {
+    initialize();
+    if (data) {
+        strcommand.display_enable = 0x01;
+    } else {
+        strcommand.display_enable = 0x00;
+    }
+    return TextLCDIoctol(TEXTLCD_DISPLAY_CONTROL, NULL);
+
+}
+
+JNIEXPORT jint
 JNICALL Java_com_example_intmob_TextLCD_IOCtlCursor
         (JNIEnv *env, jobject obj, jboolean data) {
     initialize();
     if (data) {
         strcommand.cursor_enable = 0x01;
-    } else
+    } else {
         strcommand.cursor_enable = 0x00;
+    }
 
     return TextLCDIoctol(TEXTLCD_DISPLAY_CONTROL, NULL);
 }
-
 
 JNIEXPORT jint JNICALL Java_com_example_intmob_TextLCD_IOCtlBlink
         (JNIEnv *env, jobject obj, jboolean data) {
     initialize();
-    if (data)
-        strcommand.nblink = 0x01;
-    else strcommand.nblink = 0x00;
-    close(fd);
-    return TextLCDIoctol(TEXTLCD_DISPLAY_CONTROL, NULL);
 
+    if (data) {strcommand.nblink = 0x01;}
+    else {strcommand.nblink = 0x00;}
+
+    return TextLCDIoctol(TEXTLCD_DISPLAY_CONTROL, NULL);
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
