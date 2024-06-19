@@ -241,26 +241,27 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                 return;
             }
 
-            final String eventname = Keypad.getEventName();
-
             while(true){
                 Thread.sleep(1);
-                String str1 = Keypad.read(eventname);
-
-                if(Objects.equals(str1, "open:Permisson denied")){
-                    // if permission denied while opening a device
-                    System.err.println(str1);
+                String keypadInput = Keypad.read();
+                if(keypadInput == null){
                     return;
                 }
 
-                System.out.println("keypad pressed: '" + str1 + "'");
-                if(handleKeypadInput(str1) != 0){
+                if(Objects.equals(keypadInput, "open:Permisson denied")){
+                    // if permission denied while opening a device
+                    System.err.println(keypadInput);
+                    return;
+                }
+
+                System.out.println("keypad pressed: '" + keypadInput + "'");
+                if(handleKeypadInput(keypadInput) != 0){
                     return;
                 }
             }
         }
         catch(Exception ex){
-            printex(ex);
+            ex.printStackTrace();
         }
     }
 
@@ -326,9 +327,10 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     }
 
     private void enterFullScreenMode() {
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        Window window =getWindow();
+        window.setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            getWindow().getDecorView().setSystemUiVisibility(
+            window.getDecorView().setSystemUiVisibility(
                     View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
                             | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
                             | View.SYSTEM_UI_FLAG_FULLSCREEN
@@ -374,7 +376,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         return ret;
     }
 
-    private int chmod777() {
+    public static int chmod777() {
         try {
             Process p = Runtime.getRuntime().exec("su");
             DataOutputStream os = new DataOutputStream(p.getOutputStream());
@@ -383,9 +385,10 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             os.flush();
             os.close();
             p.waitFor();
+
         }
         catch(Exception ex){
-            printex(ex);
+            ex.printStackTrace();
             return 1;
         }
         return 0;
