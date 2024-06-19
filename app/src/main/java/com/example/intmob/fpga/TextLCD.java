@@ -1,4 +1,4 @@
-package com.example.intmob;
+package com.example.intmob.fpga;
 
 public class TextLCD{
 
@@ -34,7 +34,7 @@ public class TextLCD{
         return ret;
     }
 
-    static int UpdateValue(String s, String s2){
+    public static int UpdateValue(String s, String s2){
         assert s.length() <= 16;
         assert s2.length() <= 16;
 

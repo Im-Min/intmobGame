@@ -8,7 +8,7 @@
 
 #define LED "/dev/fpga_led"
 
-JNIEXPORT jint JNICALL Java_com_example_intmob_LED_on
+JNIEXPORT jint JNICALL Java_com_example_intmob_fpga_LED_on
         (JNIEnv *env, jobject obj) {
     int fd;
     fd = open(LED, O_RDWR);
@@ -21,7 +21,7 @@ JNIEXPORT jint JNICALL Java_com_example_intmob_LED_on
     return 0;
 }
 
-JNIEXPORT jint JNICALL Java_com_example_intmob_LED_off
+JNIEXPORT jint JNICALL Java_com_example_intmob_fpga_LED_off
         (JNIEnv *env, jobject obj){
     int fd;
     fd = open(LED, O_RDWR);
@@ -34,7 +34,7 @@ JNIEXPORT jint JNICALL Java_com_example_intmob_LED_off
     return 0;
 }
 
-JNIEXPORT jint JNICALL Java_com_example_intmob_LED_set
+JNIEXPORT jint JNICALL Java_com_example_intmob_fpga_LED_set
         (JNIEnv *env, jobject obj, jint x){
     int fd;
     fd = open(LED, O_RDWR);

@@ -42,7 +42,7 @@ const char* concatd(const char* eventname){
     return concat(INPUT, eventname);
 }
 
-JNIEXPORT jstring JNICALL Java_com_example_intmob_Keypad_read(
+JNIEXPORT jstring JNICALL Java_com_example_intmob_fpga_Keypad_read(
         JNIEnv *env,
         jobject mainActivity, jstring event) {
     int fd;

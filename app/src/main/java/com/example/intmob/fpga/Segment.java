@@ -1,4 +1,4 @@
-package com.example.intmob;
+package com.example.intmob.fpga;
 
 public class Segment {
 

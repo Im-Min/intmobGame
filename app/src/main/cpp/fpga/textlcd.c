@@ -80,7 +80,7 @@ int TextLCDIoctol(int cmd, char* buf){
 }
 
 JNIEXPORT jint
-JNICALL Java_com_example_intmob_TextLCD_TextLCDOut
+JNICALL Java_com_example_intmob_fpga_TextLCD_TextLCDOut
         (JNIEnv *env, jobject obj, jstring str, jstring str2) {
     jboolean iscopy;
     char *buf0, *buf1;
@@ -111,21 +111,21 @@ JNICALL Java_com_example_intmob_TextLCD_TextLCDOut
 }
 
 JNIEXPORT jint
-JNICALL Java_com_example_intmob_TextLCD_IOCtlClear
+JNICALL Java_com_example_intmob_fpga_TextLCD_IOCtlClear
         (JNIEnv *env, jobject obj) {
     initialize();
     return TextLCDIoctol(TEXTLCD_CLEAR, NULL);
 }
 
 JNIEXPORT jint
-JNICALL Java_com_example_intmob_TextLCD_IOCtlReturnHome
+JNICALL Java_com_example_intmob_fpga_TextLCD_IOCtlReturnHome
         (JNIEnv *env, jobject obj) {
     initialize();
     return TextLCDIoctol(TEXTLCD_RETURN_HOME, NULL);
 }
 
 JNIEXPORT jint
-JNICALL Java_com_example_intmob_TextLCD_IOCtlDisplay
+JNICALL Java_com_example_intmob_fpga_TextLCD_IOCtlDisplay
         (JNIEnv *env, jobject obj, jboolean data) {
     initialize();
     if (data) {
@@ -138,7 +138,7 @@ JNICALL Java_com_example_intmob_TextLCD_IOCtlDisplay
 }
 
 JNIEXPORT jint
-JNICALL Java_com_example_intmob_TextLCD_IOCtlCursor
+JNICALL Java_com_example_intmob_fpga_TextLCD_IOCtlCursor
         (JNIEnv *env, jobject obj, jboolean data) {
     initialize();
     if (data) {
@@ -150,7 +150,7 @@ JNICALL Java_com_example_intmob_TextLCD_IOCtlCursor
     return TextLCDIoctol(TEXTLCD_DISPLAY_CONTROL, NULL);
 }
 
-JNIEXPORT jint JNICALL Java_com_example_intmob_TextLCD_IOCtlBlink
+JNIEXPORT jint JNICALL Java_com_example_intmob_fpga_TextLCD_IOCtlBlink
         (JNIEnv *env, jobject obj, jboolean data) {
     initialize();
 
@@ -159,21 +159,3 @@ JNIEXPORT jint JNICALL Java_com_example_intmob_TextLCD_IOCtlBlink
 
     return TextLCDIoctol(TEXTLCD_DISPLAY_CONTROL, NULL);
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

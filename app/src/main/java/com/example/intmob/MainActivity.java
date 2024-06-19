@@ -1,6 +1,5 @@
 package com.example.intmob;
 
-import android.app.Activity;
 import android.app.Dialog;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
@@ -10,21 +9,21 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.os.Build;
-import android.os.Looper;
 import android.opengl.GLSurfaceView;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
-import android.widget.Button;
-import android.widget.EditText;
-import android.text.format.Time;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.intmob.fpga.Keypad;
+import com.example.intmob.fpga.LED;
+import com.example.intmob.fpga.Segment;
+import com.example.intmob.fpga.TextLCD;
+
 import java.io.DataOutputStream;
 import java.lang.Process;
-import java.util.Date;
 import java.util.Objects;
 
 import javax.microedition.khronos.egl.EGLConfig;
