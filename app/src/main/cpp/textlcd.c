@@ -104,6 +104,9 @@ JNICALL Java_com_example_intmob_TextLCD_TextLCDOut
 
     close(fd);
 
+    (*env)->ReleaseStringUTFChars(env, str, buf0);
+    (*env)->ReleaseStringUTFChars(env, str2, buf1);
+
     return ret;
 }
 
