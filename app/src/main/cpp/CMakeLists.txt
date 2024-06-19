@@ -26,13 +26,17 @@ project("intmob")
 # used in the AndroidManifest.xml file.
 add_library(${CMAKE_PROJECT_NAME} SHARED
         # List C/C++ source files with relative paths to this CMakeLists.txt.
-        graphic.cpp
+
         fpga/idev.cpp
-        play.cpp
         fpga/7segment.c
         fpga/textlcd.c
         fpga/led.c
         fpga/keypad.c
+        fpga/dipsw.c
+
+        graphic.cpp
+        play.cpp
+
 )
 
 # Check if the ANDROID_NDK_HOME environment variable is set

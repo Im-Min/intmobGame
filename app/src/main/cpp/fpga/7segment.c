@@ -26,7 +26,6 @@ Java_com_example_intmob_fpga_Segment_SegmentControl(JNIEnv* env,
         ret = write(dev, nativeString, 6);
         close(dev);
 
-        (*env)->ReleaseStringUTFChars(env, data, nativeString);
 
     } else{
         __android_log_print(ANDROID_LOG_ERROR, "7segment.c", "Device Open ERROR!\n");

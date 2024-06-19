@@ -5,6 +5,7 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
+import android.opengl.GLSurfaceView.Renderer;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -17,10 +18,12 @@ import android.view.WindowManager;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.intmob.fpga.DipSW;
 import com.example.intmob.fpga.Keypad;
 import com.example.intmob.fpga.LED;
 import com.example.intmob.fpga.Segment;
 import com.example.intmob.fpga.TextLCD;
+import com.example.intmob.lang.DaemonThread;
 
 import java.io.DataOutputStream;
 import java.lang.Process;
@@ -33,8 +36,6 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     private float proximity;
     private SensorManager sensorManager;
     private Sensor prox;
-
-    BackThread thread = new BackThread();
     protected static final int DIALOG_SIMPLE_MESSAGE = 1;
     boolean stop = false;
     int count = 0;
@@ -52,13 +53,18 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        System.out.println("super.onCreate++");
+        System.out.println("super.onCreate(savedInstanceState) begin");
         super.onCreate(savedInstanceState);
-        System.out.println("super.onCreate--");
+        System.out.println("super.onCreate(savedInstanceState) done");
 
         // requestFeature() must be called before adding content
         // or get runtime exception
         requestWindowFeature(Window.FEATURE_NO_TITLE);
+
+        if(chmod777() != 0){
+            System.out.println("err:chmod777 fail");
+            return;
+        }
 
         sensorManager = (SensorManager)getSystemService(SENSOR_SERVICE);
 
@@ -69,11 +75,10 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         m_eventHandler = new EventHandler();
 
         // Thread Start
-        thread.setDaemon(true);
-        thread.start();
-        System.out.println("BackThread started");
+        new SevenSegmentThread().start();
+        new DipSWThread().start();
+        new KeypadThread().start();
 
-        new Thread(this::eventloop).start();
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
         glSurfaceView = findViewById(R.id.glSurfaceView);
@@ -82,37 +87,35 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         }
 
         glSurfaceView.setEGLContextClientVersion(2);
-        glSurfaceView.setRenderer(new GLSurfaceView.Renderer() {
-            @Override
-            public void onSurfaceCreated(GL10 gl, EGLConfig config) {
-                if(init() != 0){
-                    System.err.println("err:jni function init fail");
-                }
-            }
-
-            @Override
-            public void onSurfaceChanged(GL10 gl, int width, int height) {
-                gl.glViewport(0, 0, width, height);
-                if(setOrthographicMatrix(width, height) != 0){
-                    System.err.println("err:setOrthographicMatrix fail");
-                }
-            }
-
-            @Override
-            public void onDrawFrame(GL10 gl) {
-                int ret = step();
-                if(ret == 2){
-                    // Ghost and Pacman collided
-                    OnPacmanGhostCollision();
-                }
-            }
-        });
+        glSurfaceView.setRenderer(new Renderer2());
 
         System.out.println("------------------------- onCreate done ----------------------------");
     }
 
-    public void UpdateValue(){
-        showDialog(DIALOG_SIMPLE_MESSAGE);
+    public class Renderer2 implements Renderer {
+        @Override
+        public void onSurfaceCreated(GL10 gl, EGLConfig config) {
+            if(init() != 0){
+                System.err.println("err:jni function init fail");
+            }
+        }
+
+        @Override
+        public void onSurfaceChanged(GL10 gl, int width, int height) {
+            gl.glViewport(0, 0, width, height);
+            if(setOrthographicMatrix(width, height) != 0){
+                System.err.println("err:setOrthographicMatrix fail");
+            }
+        }
+
+        @Override
+        public void onDrawFrame(GL10 gl) {
+            int ret = step();
+            if(ret == 2){
+                // Ghost and Pacman collided
+                OnPacmanGhostCollision();
+            }
+        }
     }
 
     public class EventHandler extends Handler{
@@ -120,7 +123,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         public void handleMessage(Message msg){
             try{
                 if(msg.what==1){
-                    UpdateValue();
+                    showDialog(DIALOG_SIMPLE_MESSAGE);
                 }
             }
             catch(Exception ex){
@@ -129,18 +132,50 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         }
     }
 
-    class BackThread extends Thread{
+    class SevenSegmentThread extends DaemonThread{
+        @Override
         public void run(){
             try{
                 while(!stop) {
-                    if(Segment.set7SegmentNumber(count) != 0){
-                        sleep(1000);
+
+                    if(!paused) {
+                        if (Segment.set7SegmentNumber(count) != 0) {
+                            sleep(1000);
+                        }
                     }
+
                     sleep(1);
                 }
 
             } catch (InterruptedException ex) {
                 ex.printStackTrace();
+            }
+        }
+    }
+
+    private class DipSWThread extends DaemonThread {
+        @Override
+        public void run() {
+            int value = DipSW.GetValue();
+            if(value < 0){
+                System.out.println("err0:DipSW value="+value);
+                return;
+            }
+            while(!stop){
+                int ret = DipSW.GetValue();
+                if(ret < 0){
+                    System.out.println("err1:DipSW value="+value);
+                    return;
+                }
+                if(value != ret){
+                    value = ret;
+                    System.out.println("DipSW value changed. was "+value);
+                }
+                try {
+                    sleep(1000);
+                } catch (InterruptedException e) {
+                    return;
+                }
             }
         }
     }
@@ -152,7 +187,6 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         // KEYCODE_BACK is a back button on the table board.
         if(keyCode == KeyEvent.KEYCODE_BACK){
             stop = true;
-            thread.interrupt();
         }
         return super.onKeyDown(keyCode, event);
     }
@@ -190,8 +224,12 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     }
 
 
+    @Override
     protected void onResume() {
         super.onResume();
+
+        paused = false;
+
         System.out.println("onResume");
 
         if(prox != null){
@@ -203,12 +241,19 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         enterFullScreenMode();
     }
 
+    private boolean paused = false;
+
+    @Override
     protected void onPause() {
         super.onPause();
+
+        paused = true;
+
         System.out.println("onPause");
 
         glSurfaceView.onPause();
 
+        LED.off();
 
         sensorManager.unregisterListener(this);
         super.onStop();
@@ -236,33 +281,32 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         System.err.println(ex.toString());
     }
 
-    public void eventloop(){
-        try{
-            if(chmod777() != 0){
-                return;
+    private class KeypadThread extends DaemonThread{
+        @Override
+        public void run() {
+            try{
+                while(!stop){
+                    Thread.sleep(1);
+                    String keypadInput = Keypad.read();
+                    if(keypadInput == null){
+                        return;
+                    }
+
+                    if(Objects.equals(keypadInput, "open:Permisson denied")){
+                        // if permission denied while opening a device
+                        System.err.println(keypadInput);
+                        return;
+                    }
+
+                    System.out.println("keypad pressed: '" + keypadInput + "'");
+                    if(handleKeypadInput(keypadInput) != 0){
+                        return;
+                    }
+                }
             }
-
-            while(true){
-                Thread.sleep(1);
-                String keypadInput = Keypad.read();
-                if(keypadInput == null){
-                    return;
-                }
-
-                if(Objects.equals(keypadInput, "open:Permisson denied")){
-                    // if permission denied while opening a device
-                    System.err.println(keypadInput);
-                    return;
-                }
-
-                System.out.println("keypad pressed: '" + keypadInput + "'");
-                if(handleKeypadInput(keypadInput) != 0){
-                    return;
-                }
+            catch(Exception ex){
+                ex.printStackTrace();
             }
-        }
-        catch(Exception ex){
-            ex.printStackTrace();
         }
     }
 

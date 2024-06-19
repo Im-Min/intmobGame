@@ -7,7 +7,7 @@ public class LED {
     static {System.loadLibrary("intmob");}
 
     static native int on();
-    static native int off();
+    public static native int off();
     static native int set(int value);
 
     static Random dice = new Random();
