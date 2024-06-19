@@ -1,11 +1,6 @@
 package com.example.intmob;
 
-import android.util.Log;
 public class TextLCD{
-
-    static{
-        System.loadLibrary("intmob");
-    }
 
     public static native int control(String str, String str2);
     public static native int clear();
@@ -13,42 +8,33 @@ public class TextLCD{
     public static native int IOCtlReturnHome ();
     public static native int IOCtlCursor(boolean data);
     public static native int IOCtlBlink(boolean data);
+    public static String padLeft(String s, char fill, int padSize) {
+        if (padSize < 0) {
+            String err = "padSize must be >= 0 (was " + padSize + ")";
+            throw new IllegalArgumentException(err);
+        }
 
-    static void UpdateValue(int count){
+        int repeats = Math.max(0, padSize - s.length());
+        return repeat(Character.toString(fill), repeats) + s;
+    }
+    public static String repeat(String x, int y) {
+        String ret = "";
+        for(int i=0;i<y;i++) {
+            ret += x;
+        }
+        return ret;
+    }
+
+    static void UpdateValue(String s, String s2){
+        assert s.length() <= 16;
+        assert s2.length() <= 16;
         clear();
         IOCtlReturnHome();
         IOCtlDisplay(true);
         IOCtlCursor(false);
         IOCtlBlink(false);
+        control(padLeft(s, ' ', 16), padLeft(s2, ' ', 16));
 
-       switch (count){
-           case 1:
-               control("    Doke'Mon", "  stage 1 - 1");
-               break;
-           case 2:
-               control("    Doke'Mon", "  stage 1 - 2");
-               break;
-           case 3:
-               control("    Doke'Mon", "  stage 1 - 3");
-               break;
-           case 4:
-               control("    Doke'Mon", "  stage 2 - 1");
-               break;
-           case 5:
-               control("    Doke'Mon", "  stage 2 - 2");
-               break;
-           case 6:
-               control("    Doke'Mon", "  stage 2 - 3");
-               break;
-           case 7:
-               control("    Doke'Mon", "  stage 3 - 1");
-               break;
-           case 8:
-               control("    Doke'Mon", "  stage 3 - 2");
-               break;
-           case 9:
-               control("    Doke'Mon", "  stage 3 - 3");
-               break;
-       }
+
     }
 }

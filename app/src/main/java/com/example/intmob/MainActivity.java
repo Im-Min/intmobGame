@@ -54,7 +54,7 @@ public class MainActivity extends AppCompatActivity {
         thread.start();
         System.out.println("BackThread started");
 
-        TextLCD.UpdateValue(1);
+        TextLCD.UpdateValue("HANBACK", "Electronics!");
 
         new Thread(this::eventloop).start();
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
@@ -69,7 +69,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onSurfaceCreated(GL10 gl, EGLConfig config) {
                 if(init() != 0){
-                    System.err.println("[ERROR] jni function init failed!");
+                    System.err.println("err:jni function initialize fail");
                 }
             }
 
@@ -77,7 +77,7 @@ public class MainActivity extends AppCompatActivity {
             public void onSurfaceChanged(GL10 gl, int width, int height) {
                 gl.glViewport(0, 0, width, height);
                 if(setOrthographicMatrix(width, height) != 0){
-                    System.err.println("[ERROR] setOrthographicMatrix failed!");
+                    System.err.println("err:setOrthographicMatrix fail");
                 }
             }
 
@@ -115,8 +115,7 @@ public class MainActivity extends AppCompatActivity {
             try{
 
                 while(!stop) {
-                    String data = String.format("%06d", count);
-                    Segment.SegmentControl(data);
+                    Segment.set7SegmentNumber(count);
                     sleep(1);
                 }
 

@@ -1,25 +1,24 @@
+#include <string.h>
 #include <jni.h>
-#include <errno.h>
+#include <stdio.h>
+#include <stdlib.h>
 #include <fcntl.h>
 #include <unistd.h>
-#include <string.h>
-#include <sys/mman.h>
 #include <termios.h>
-
-#define TEXTLCD_BASE 0xbc
-#define TEXTLCD_COMMAND_SET _IOW(TEXTLCD_BASE, 0, int)
-#define TEXTLCD_FUNCTION_SET _IOW(TEXTLCD_BASE, 1, int)
-#define TEXTLCD_DISPLAY_CONTROL _IOW(TEXTLCD_BASE, 2, int)
-#define TEXTLCD_CURSOR_SHIFT _IOW(TEXTLCD_BASE, 3, int)
-#define TEXTLCD_ENTRY_MODE_SET _IOW(TEXTLCD_BASE, 4, int)
-#define TEXTLCD_RETURN_HOME _IOW(TEXTLCD_BASE, 5, int)
-#define TEXTLCD_CLEAR _IOW(TEXTLCD_BASE, 6, int)
-#define TEXTLCD_DD_ADDRESS _IOW(TEXTLCD_BASE, 7, int)
-#define TEXTLCD_WRITE_BYTE _IOW(TEXTLCD_BASE, 8, int)
+#include <sys/mman.h>
+#include <errno.h>
 
 #define TEXTLCD "/dev/fpga_textlcd"
-
-int fd = -1;
+#define TEXTLCD_BASE            0xbc
+#define TEXTLCD_COMMAND_SET     _IOW(TEXTLCD_BASE, 0, int)
+#define TEXTLCD_FUNCTION_SET    _IOW(TEXTLCD_BASE, 1, int)
+#define TEXTLCD_DISPLAY_CONTROL _IOW(TEXTLCD_BASE, 2, int)
+#define TEXTLCD_CURSOR_SHIFT    _IOW(TEXTLCD_BASE, 3, int)
+#define TEXTLCD_ENTRY_MODE_SET  _IOW(TEXTLCD_BASE, 4, int)
+#define TEXTLCD_RETURN_HOME     _IOW(TEXTLCD_BASE, 5, int)
+#define TEXTLCD_CLEAR           _IOW(TEXTLCD_BASE, 6, int)
+#define TEXTLCD_DD_ADDRESS      _IOW(TEXTLCD_BASE, 7, int)
+#define TEXTLCD_WRITE_BYTE      _IOW(TEXTLCD_BASE, 8, int)
 
 struct strcommand_variable{
     char rows;
@@ -41,7 +40,7 @@ struct strcommand_variable{
 static struct strcommand_variable strcommand;
 static int initialized = 0;
 
-void init(){
+void initialize(){
     if (!initialized){
         strcommand.rows = 0;
         strcommand.nfonts = 0;
@@ -60,9 +59,9 @@ void init(){
 }
 
 int TextLCDIoctol(int cmd, char* buf){
-    int ret, i;
+    int fd, ret, i;
 
-    if (fd < 0) fd = open(TEXTLCD, O_WRONLY | O_NDELAY);
+    fd = open(TEXTLCD, O_WRONLY | O_NDELAY);
     if (fd < 0) return -errno;
 
     if (cmd == TEXTLCD_WRITE_BYTE) {
@@ -75,7 +74,7 @@ int TextLCDIoctol(int cmd, char* buf){
         ret = ioctl(fd, cmd, &strcommand, 32);
     }
     close(fd);
-    fd = -1;
+    
     return ret;
 }
 
@@ -100,7 +99,7 @@ JNICALL Java_com_example_intmob_TextLCD_control
     if (fd < 0) fd = open(TEXTLCD, O_WRONLY | O_NDELAY);
     if (fd < 0) return -errno;
 
-    init();
+    initialize();
 
     buf0 = (char *) (*env)->GetStringUTFChars(env, str, &iscopy);
     buf1 = (char *) (*env)->GetStringUTFChars(env, str2, &iscopy);
@@ -122,7 +121,7 @@ JNICALL Java_com_example_intmob_TextLCD_control
 JNIEXPORT jint
 JNICALL Java_com_example_intmob_TextLCD_clear
         (JNIEnv *env, jobject obj) {
-    init();
+    initialize();
     return TextLCDIoctol(TEXTLCD_CLEAR, NULL);
 }
 
@@ -130,7 +129,7 @@ JNICALL Java_com_example_intmob_TextLCD_clear
 JNIEXPORT jint
 JNICALL Java_com_example_intmob_TextLCD_IOCtlDisplay
         (JNIEnv *env, jobject obj, jboolean data) {
-    init();
+    initialize();
     if (data) {
         strcommand.display_enable = 0x01;
     } else {
@@ -144,14 +143,14 @@ JNICALL Java_com_example_intmob_TextLCD_IOCtlDisplay
 JNIEXPORT jint
 JNICALL Java_com_example_intmob_TextLCD_IOCtlReturnHome
         (JNIEnv *env, jobject obj) {
-    init();
+    initialize();
     return TextLCDIoctol(TEXTLCD_RETURN_HOME, NULL);
 }
 
 JNIEXPORT jint
 JNICALL Java_com_example_intmob_TextLCD_IOCtlCursor
         (JNIEnv *env, jobject obj, jboolean data) {
-    init();
+    initialize();
     if (data) {
         strcommand.cursor_enable = 0x01;
     } else
@@ -163,7 +162,7 @@ JNICALL Java_com_example_intmob_TextLCD_IOCtlCursor
 
 JNIEXPORT jint JNICALL Java_com_example_intmob_TextLCD_IOCtlBlink
         (JNIEnv *env, jobject obj, jboolean data) {
-    init();
+    initialize();
     if (data)
         strcommand.nblink = 0x01;
     else strcommand.nblink = 0x00;
