@@ -2,18 +2,28 @@ package com.example.intmob;
 
 import android.app.Activity;
 import android.app.Dialog;
+
+import android.hardware.Sensor;
+import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
+import android.hardware.SensorManager;
+
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.os.Build;
 import android.os.Looper;
+
 import android.opengl.GLSurfaceView;
+
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+
 import android.widget.Button;
 import android.widget.EditText;
+
 import android.text.format.Time;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -26,7 +36,7 @@ import java.util.Objects;
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements SensorEventListener {
     BackThread thread = new BackThread();
     protected static final int DIALOG_SIMPLE_MESSAGE = 1;
     boolean stop = false;
