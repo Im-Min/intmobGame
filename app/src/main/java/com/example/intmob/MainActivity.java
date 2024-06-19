@@ -194,23 +194,6 @@ public class MainActivity extends AppCompatActivity {
         System.err.println(ex.toString());
     }
 
-    private int chmod777() {
-        try {
-            Process p = Runtime.getRuntime().exec("su");
-            DataOutputStream os = new DataOutputStream(p.getOutputStream());
-            os.writeBytes("chmod 777 /dev/input/*\n");
-            os.writeBytes("exit\n");
-            os.flush();
-            os.close();
-            p.waitFor();
-        }
-        catch(Exception ex){
-            printex(ex);
-            return 1;
-        }
-        return 0;
-    }
-
     public void eventloop(){
         try{
             if(chmod777() != 0){
@@ -260,7 +243,6 @@ public class MainActivity extends AppCompatActivity {
         }
         else if(Objects.equals(key, "3")){
             // 3
-            // test
             setScore(98765);
         }
         else if(Objects.equals(key, "4")){
@@ -277,12 +259,15 @@ public class MainActivity extends AppCompatActivity {
         }
         else if("7".equals(key)){
             // 7
+            assert TextLCD.IOCtlReturnHome() >= 0;
         }
         else if(Objects.equals(key, "8")){
             // 8
+            assert TextLCD.IOCtlClear() >= 0;
         }
         else if(Objects.equals(key, "9")){
             // 9
+            assert TextLCD.IOCtlCursor(false) >= 0;
         }
         else if(Objects.equals(key, ":")){
             // 0
@@ -344,6 +329,23 @@ public class MainActivity extends AppCompatActivity {
             System.err.println("err:setDirection="+ret);
         }
         return ret;
+    }
+
+    private int chmod777() {
+        try {
+            Process p = Runtime.getRuntime().exec("su");
+            DataOutputStream os = new DataOutputStream(p.getOutputStream());
+            os.writeBytes("chmod 777 /dev/input/*\n");
+            os.writeBytes("exit\n");
+            os.flush();
+            os.close();
+            p.waitFor();
+        }
+        catch(Exception ex){
+            printex(ex);
+            return 1;
+        }
+        return 0;
     }
 
     /**
