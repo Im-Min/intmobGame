@@ -1,3 +1,7 @@
+//
+// Created on 2024-06-19.
+//
+
 #include <jni.h>
 #include <sys/types.h>
 #include <sys/stat.h>
@@ -17,23 +21,12 @@
 #include <errno.h>
 #include <sys/stat.h>
 
-
-
 typedef struct input_event {
     struct timeval time;
     unsigned short type;
     unsigned short code;
     unsigned int value;
 } input_event;
-
-
-
-#ifdef __cplusplus
-extern "C"
-{
-#endif
-
-
 
 const char* concat(const char *s1, const char *s2)
 {
@@ -49,19 +42,19 @@ const char* concatd(const char* eventname){
     return concat(INPUT, eventname);
 }
 
-JNIEXPORT jstring JNICALL Java_com_example_intmob_MainActivity_stringFromJNI(
+JNIEXPORT jstring JNICALL Java_com_example_intmob_Keypad_read(
         JNIEnv *env,
         jobject mainActivity, jstring event) {
     int fd;
 
-    const char* eventname = env->GetStringUTFChars(event, 0);
+    const char* eventname = (*env)->GetStringUTFChars(env, event, 0);
     const char* path = concatd(eventname);
 
     fd = open(path, O_RDONLY);
 
     if (fd < 0) {
         const char* errmsg = concat("open:", strerror(errno));
-        return env->NewStringUTF(errmsg);
+        return (*env)->NewStringUTF(env, errmsg);
     }
 
     const int input_size = sizeof(input_event);
@@ -72,7 +65,7 @@ JNIEXPORT jstring JNICALL Java_com_example_intmob_MainActivity_stringFromJNI(
 
     if (r < 0) {
         const char* errmsg = concat("read:", strerror(errno));
-        return env->NewStringUTF(errmsg);
+        return (*env)->NewStringUTF(env, errmsg);
     }
 
     //printf("time=%ld.%06lu type=%hu code=%hu value=%u\n", input_data->time.tv_sec,input_data->time.tv_usec, input_data->type, input_data->code, input_data->value);
@@ -80,19 +73,8 @@ JNIEXPORT jstring JNICALL Java_com_example_intmob_MainActivity_stringFromJNI(
     char result[2];
     result[0] = '0' + (input_data.code - 1);
     result[1] = '\0';
-    return env->NewStringUTF(result);
+
+    (*env)->ReleaseStringUTFChars(env, event, eventname);
+
+    return (*env)->NewStringUTF(env, result);
 }
-
-JNIEXPORT jint JNICALL Java_com_example_intmob_MainActivity_div0(JNIEnv *env, jobject mainActivity){
-    int i = 0;
-    i /= i;
-    return 2;
-}
-
-
-
-#ifdef __cplusplus
-}
-#endif
-
-

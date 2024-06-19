@@ -1,8 +1,7 @@
-// This is copy of https://github.com/22427/idev/blob/master/idev.h
-// License: The Unlicense
+// https://github.com/22427/idev/blob/master/idev.h
+// Unlicense
 
 #include <fstream>
-
 #include <sstream>
 #include <unordered_map>
 #include <vector>

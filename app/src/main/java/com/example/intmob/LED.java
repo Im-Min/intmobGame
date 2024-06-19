@@ -3,6 +3,9 @@ package com.example.intmob;
 import java.util.Random;
 
 public class LED {
+
+    static {System.loadLibrary("intmob");}
+
     static native int on();
     static native int off();
     static native int set(int value);

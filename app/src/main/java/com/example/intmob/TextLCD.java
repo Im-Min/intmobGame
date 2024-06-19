@@ -2,6 +2,8 @@ package com.example.intmob;
 
 public class TextLCD{
 
+    static {System.loadLibrary("intmob");}
+
     public static native int TextLCDOut(String str, String str2);
 
     public static native int IOCtlClear();

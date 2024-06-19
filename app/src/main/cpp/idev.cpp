@@ -20,8 +20,6 @@ extern "C"
 {
 #endif
 
-
-
 JNIEXPORT jstring JNICALL Java_com_example_intmob_MainActivity_idev(
         JNIEnv *env,
         jobject mainActivity) {
@@ -40,8 +38,6 @@ JNIEXPORT jstring JNICALL Java_com_example_intmob_MainActivity_idev(
 
     return NULL;
 }
-
-
 
 #ifdef __cplusplus
 }

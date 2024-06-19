@@ -2,28 +2,22 @@ package com.example.intmob;
 
 import android.app.Activity;
 import android.app.Dialog;
-
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
-
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.os.Build;
 import android.os.Looper;
-
 import android.opengl.GLSurfaceView;
-
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
-
 import android.widget.Button;
 import android.widget.EditText;
-
 import android.text.format.Time;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -230,6 +224,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
                 if(proximity == 0){
                     // near
+                    
                     LED.rand();
                 }
 
@@ -251,7 +246,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
             while(true){
                 Thread.sleep(1);
-                String str1 = stringFromJNI(eventname);
+                String str1 = Keypad.read(eventname);
 
                 if(Objects.equals(str1, "open:Permisson denied")){
                     // if permission denied while opening a device
@@ -401,11 +396,9 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
      * A native method that is implemented by the 'intmob' native library,
      * which is packaged with this application.
      */
-    private native String stringFromJNI(String event);
     private native String idev();
     private native int init();
     private native int step();
     private native int setDirection(int direction);
     private native int setOrthographicMatrix(int width, int height);
-    private native int div0();
 }
