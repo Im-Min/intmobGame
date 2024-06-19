@@ -61,8 +61,6 @@ public class MainActivity extends AppCompatActivity {
         thread.start();
         System.out.println("BackThread started");
 
-        TextLCD.UpdateValue("HANBACK", "Electronics!");
-
         new Thread(this::eventloop).start();
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
@@ -271,12 +269,14 @@ public class MainActivity extends AppCompatActivity {
         }
         else if(Objects.equals(key, ":")){
             // 0
+            assert TextLCD.IOCtlCursor(true) >= 0;
         }
         else if(Objects.equals(key, "=")){
             // A
+            TextLCD.UpdateValue("HANBACK", "Electronics!");
         }
         else{
-            System.err.println("[ERROR] Unhandled keypad input occured! key='"+key+"', length="+key.length());
+            System.err.println("err:Unknown keypad input. key='"+key+"', length="+key.length());
             return 1;
         }
         return 0;
