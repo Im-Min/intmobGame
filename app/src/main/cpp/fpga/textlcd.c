@@ -159,3 +159,21 @@ JNIEXPORT jint JNICALL Java_com_example_intmob_fpga_TextLCD_IOCtlBlink
 
     return TextLCDIoctol(TEXTLCD_DISPLAY_CONTROL, NULL);
 }
+
+JNIEXPORT jint JNICALL Java_com_example_intmob_fpga_TextLCD_write
+        (JNIEnv *env, jobject obj, jstring x) {
+
+    int fd, ret, i;
+
+    fd = open(TEXTLCD, O_WRONLY | O_NDELAY);
+    if (fd < 0) return -errno;
+
+    const char* cx = (*env)->GetStringUTFChars(env, x, 0);
+
+    ret = write(fd, cx, strlen(cx));
+    close(fd);
+
+    (*env)->ReleaseStringUTFChars(env, x, cx);
+
+    return 0;
+}

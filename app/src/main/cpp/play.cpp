@@ -5,6 +5,7 @@
 #include <EGL/eglext.h>
 #include <string>
 #include <string.h>
+#include <android/log.h>
 #include "Pacman.h"
 #include "Pacman.cpp"
 #include "Ghost.h"
@@ -60,7 +61,7 @@ Java_com_example_intmob_MainActivity_init(JNIEnv* env, jobject /* this */) {
         pacman = new Pacman();
         ghost = new Ghost();
 
-        //map = new Map();
+        map = new Map();
 
         ghost->setPosition(0.0f, 0.5f);
 
@@ -85,8 +86,6 @@ Java_com_example_intmob_MainActivity_step(JNIEnv* env, jobject /* this */) {
         // Pacman 렌더링 및 게임 로직 업데이트 코드
         glClear(GL_COLOR_BUFFER_BIT);
 
-        //map->drawMap(mvpMatrix);
-
         pacman->move();
         pacman->draw(mvpMatrix);
 
@@ -101,6 +100,8 @@ Java_com_example_intmob_MainActivity_step(JNIEnv* env, jobject /* this */) {
             // Pacman and ghost have collision, return 2.
             return 2;
         }
+
+        //map->drawMap(mvpMatrix);
     }
     catch(...){
         return 1;

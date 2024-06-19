@@ -57,6 +57,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         System.out.println("super.onCreate--");
 
         // requestFeature() must be called before adding content
+        // or get runtime exception
         requestWindowFeature(Window.FEATURE_NO_TITLE);
 
         sensorManager = (SensorManager)getSystemService(SENSOR_SERVICE);
@@ -106,6 +107,8 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                 }
             }
         });
+
+        System.out.println("------------------------- onCreate done ----------------------------");
     }
 
     public void UpdateValue(){
@@ -129,19 +132,16 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     class BackThread extends Thread{
         public void run(){
             try{
-
                 while(!stop) {
                     if(Segment.set7SegmentNumber(count) != 0){
-                        sleep(1234);
+                        sleep(1000);
                     }
                     sleep(1);
                 }
 
-            } catch (InterruptedException e) {
-                System.out.println("BackThread:Interrupted");
-                return;
+            } catch (InterruptedException ex) {
+                ex.printStackTrace();
             }
-
         }
     }
 
@@ -209,6 +209,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
         glSurfaceView.onPause();
 
+
         sensorManager.unregisterListener(this);
         super.onStop();
     }
@@ -274,10 +275,15 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
         if(Objects.equals(key, "1")){
             // 1
+
             // Can't create handler inside thread that has not called Looper.prepare()
+            // Use m_eventHandler message or get runtime exception
+
+            // show popup message window.
             Message msg1 = m_eventHandler.obtainMessage();
             msg1.what = 1;
             m_eventHandler.sendMessage(msg1);
+
         }
         else if(Objects.equals(key, "2")){
             // 2
@@ -285,6 +291,8 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         }
         else if(Objects.equals(key, "3")){
             // 3
+
+            // Set fpga_segment number to 098765.
             setScore(98765);
         }
         else if(Objects.equals(key, "4")){
@@ -301,23 +309,32 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         }
         else if("7".equals(key)){
             // 7
+
+            // Set cursor home.
             assert TextLCD.IOCtlReturnHome() >= 0;
         }
         else if(Objects.equals(key, "8")){
             // 8
+
+            // Clear TextLCD.
             assert TextLCD.IOCtlClear() >= 0;
         }
         else if(Objects.equals(key, "9")){
             // 9
+
+            // Hide cursor.
             assert TextLCD.IOCtlCursor(false) >= 0;
         }
         else if(Objects.equals(key, ":")){
             // 0
+
+            // Show cursor.
             assert TextLCD.IOCtlCursor(true) >= 0;
         }
         else if(Objects.equals(key, "=")){
             // A
-            TextLCD.UpdateValue("HANBACK", "Electronics!");
+
+            assert TextLCD.write("0123456789ABCDEFGHIJ") == 0;
         }
         else{
             System.err.println("err:Unknown keypad input. key='"+key+"', length="+key.length());
