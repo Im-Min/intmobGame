@@ -37,6 +37,10 @@ import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 
 public class MainActivity extends AppCompatActivity implements SensorEventListener {
+    private float proximity;
+    private SensorManager sensorManager;
+    private Sensor prox;
+
     BackThread thread = new BackThread();
     protected static final int DIALOG_SIMPLE_MESSAGE = 1;
     boolean stop = false;
@@ -62,7 +66,11 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         // requestFeature() must be called before adding content
         requestWindowFeature(Window.FEATURE_NO_TITLE);
 
+        sensorManager = (SensorManager)getSystemService(SENSOR_SERVICE);
+
         setContentView(R.layout.activity_main);
+
+        prox = sensorManager.getDefaultSensor(Sensor.TYPE_PROXIMITY);
 
         m_eventHandler = new EventHandler();
 
@@ -130,7 +138,9 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             try{
 
                 while(!stop) {
-                    Segment.set7SegmentNumber(count);
+                    if(Segment.set7SegmentNumber(count) != 0){
+                        sleep(1234);
+                    }
                     sleep(1);
                 }
 
@@ -157,7 +167,6 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     // Exception processing for input countdown value
     @Override
     protected Dialog onCreateDialog(int id) {
-        // TODO Auto-generated method stub
         Dialog d = new Dialog(MainActivity.this);
         Window window = d.getWindow();
 
@@ -187,15 +196,45 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         // TODO
     }
 
-    protected void onPause() {
-        super.onPause();
-        glSurfaceView.onPause();
-    }
 
     protected void onResume() {
         super.onResume();
+        System.out.println("onResume");
+
+        if(prox != null){
+            sensorManager.registerListener(this, prox,
+                    SensorManager.SENSOR_DELAY_NORMAL);
+        }
+
         glSurfaceView.onResume();
         enterFullScreenMode();
+    }
+
+    protected void onPause() {
+        super.onPause();
+        System.out.println("onPause");
+
+        glSurfaceView.onPause();
+
+        sensorManager.unregisterListener(this);
+        super.onStop();
+    }
+
+    public void onAccuracyChanged(Sensor sensor, int accuracy){}
+
+    public void onSensorChanged(SensorEvent event){
+        switch(event.sensor.getType()){
+            case Sensor.TYPE_PROXIMITY:
+                proximity = event.values[0];
+                System.out.println("proximity="+proximity);
+
+                if(proximity == 0){
+                    // near
+                    LED.rand();
+                }
+
+                break;
+        }
     }
 
     private void printex(Exception ex){

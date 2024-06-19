@@ -29,8 +29,8 @@ Java_com_example_intmob_Segment_SegmentControl(JNIEnv* env,
         (*env)->ReleaseStringUTFChars(env, data, nativeString);
 
     } else{
-        __android_log_print(ANDROID_LOG_ERROR, "SegmentActivity", "Device Open ERROR!\n");
-        exit(1);
+        __android_log_print(ANDROID_LOG_ERROR, "7segment.c", "Device Open ERROR!\n");
+        return 1;
     }
     return 0;
 }
