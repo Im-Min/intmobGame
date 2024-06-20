@@ -7,8 +7,9 @@
 #include <termios.h>
 #include <sys/mman.h>
 #include <android/log.h>
+#include <errno.h>
 
-jint
+JNIEXPORT jint JNICALL
 Java_com_example_intmob_fpga_DotMatrix_DotMatrixControl(
         JNIEnv* env, jobject thiz, jstring data)
 {

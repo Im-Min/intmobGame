@@ -22,6 +22,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.intmob.fpga.DipSW;
 import com.example.intmob.fpga.DotMatrix;
+import com.example.intmob.fpga.FLED;
 import com.example.intmob.fpga.Keypad;
 import com.example.intmob.fpga.LED;
 import com.example.intmob.fpga.OLED;
@@ -385,7 +386,8 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
         }
         else if(Objects.equals(key, "2")){
-            // 2
+            // 2 (up)
+
             setDirectionUp();
         }
         else if(Objects.equals(key, "3")){
@@ -394,15 +396,15 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             setScore(dice.nextInt(1000000));
         }
         else if(Objects.equals(key, "4")){
-            // 4
-            setDirectionLeft();
+            // 4 (left)
+            FLED.random();
         }
         else if(Objects.equals(key, "5")){
-            // 5
+            // 5 (down)
             setDirectionDown();
         }
         else if(Objects.equals(key, "6")){
-            // 6
+            // 6 (right)
             setDirectionRight();
         }
         else if("7".equals(key)){

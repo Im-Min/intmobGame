@@ -9,20 +9,18 @@ public class LED {
     static {
         MainActivity.loadLibrary();}
 
-    static native int on();
+    public static native int on();
     public static native int off();
-    static native int set(int value);
-
-
+    public static native int set(int value);
 
     public static int rand(){
+        int ret = set(MainActivity.dice.nextInt(256));
 
-        int ret =  set(MainActivity.dice.nextInt(256));
         if(ret != 0){
             System.err.println("LED.rand()="+ret);
         }
-        return ret;
 
+        return ret;
     }
 
 }
