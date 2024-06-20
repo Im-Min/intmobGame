@@ -197,8 +197,6 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
         glSurfaceView.onPause();
 
-        LED.off();
-
         sensorManager.unregisterListener(this);
         super.onStop();
     }
@@ -225,7 +223,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                 segment.random();
                 break;
             case 4:
-                dotMatrix.startf("HaNbAcKk.");
+                dotMatrix.startf("PACMAN", 19);
                 break;
             case 5:
                 setDirectionDown();
