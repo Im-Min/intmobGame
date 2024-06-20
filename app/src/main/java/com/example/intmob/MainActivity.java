@@ -1,15 +1,17 @@
 package com.example.intmob;
 
 import android.app.Dialog;
+import android.content.Context;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.opengl.GLSurfaceView.Renderer;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.Vibrator;
 import android.os.Handler;
 import android.os.Message;
-import android.os.Build;
 import android.opengl.GLSurfaceView;
 import android.view.KeyEvent;
 import android.view.View;
@@ -33,6 +35,7 @@ import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 
 public class MainActivity extends AppCompatActivity implements SensorEventListener {
+    Vibrator mVibrator;
     private float proximity;
     private SensorManager sensorManager;
     private Sensor prox;
@@ -61,8 +64,10 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         // or get runtime exception
         requestWindowFeature(Window.FEATURE_NO_TITLE);
 
+        mVibrator = (Vibrator)getSystemService(Context.VIBRATOR_SERVICE);
+
         if(chmod777() != 0){
-            System.out.println("err:chmod777 fail");
+            System.out.println("err:chmod777 fail. return");
             return;
         }
 
@@ -170,6 +175,10 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                 if(value != ret){
                     value = ret;
                     System.out.println("DipSW value changed: "+value);
+
+                    // Write code below which will be executed every dip switch value change
+                    mVibrator.vibrate(value / 100);
+
                 }
                 try {
                     sleep(1000);
