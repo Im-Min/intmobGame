@@ -41,7 +41,6 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     private SensorManager sensorManager;
     private Sensor prox;
     private GLSurfaceView glSurfaceView;
-    private DotMatrix dotMatrix;
 
     private static boolean isLibraryLoaded;
     public static void loadLibrary(){
@@ -63,7 +62,9 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     }
 
     EventHandler m_eventHandler;
-    Segment segment = new Segment();
+    private Segment segment = new Segment();
+    private DotMatrix dotMatrix = new DotMatrix();
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,7 +77,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
         mVibrator = (Vibrator)getSystemService(Context.VIBRATOR_SERVICE);
 
-        dotMatrix = new DotMatrix();
+
 
         new Keypad(new Keypad.KeypadHandler() {
             @Override
@@ -96,6 +97,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
         // Thread Start
         segment.start();
+        dotMatrix.start();
 
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
@@ -223,6 +225,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                 segment.random();
                 break;
             case 4:
+                dotMatrix.startf("HaNbAcKk.");
                 break;
             case 5:
                 setDirectionDown();
