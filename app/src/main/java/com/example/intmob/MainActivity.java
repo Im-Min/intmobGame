@@ -45,8 +45,6 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     Vibrator mVibrator;
     private SensorManager sensorManager;
     private Sensor prox;
-    boolean stop;
-    int count;
     private GLSurfaceView glSurfaceView;
     private DotMatrix dotMatrix;
 
@@ -70,6 +68,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     }
 
     EventHandler m_eventHandler;
+    Segment segment = new Segment();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -98,7 +97,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         m_eventHandler = new EventHandler();
 
         // Thread Start
-        new SevenSegmentThread().start();
+        segment.start();
         new DipSWThread().start();
         new KeypadThread().start();
 
@@ -156,26 +155,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         }
     }
 
-    class SevenSegmentThread extends DaemonThread{
-        @Override
-        public void run(){
-            try{
-                while(!stop) {
 
-                    if(!paused) {
-                        if (Segment.writeInt(count) != 0) {
-                            sleep(1000);
-                        }
-                    }
-
-                    sleep(1);
-                }
-
-            } catch (InterruptedException ex) {
-                Log.e("7seg", ex.toString());
-            }
-        }
-    }
 
     private class DipSWThread extends DaemonThread {
         @Override
@@ -185,7 +165,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                 System.out.println("err0:DipSW.GetValue returned "+value);
                 return;
             }
-            while(!stop){
+            while(true){
                 int ret = DipSW.GetValue();
                 if(ret < 0){
                     System.out.println("err1:DipSW.GetValue returned "+value);
@@ -232,19 +212,8 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         }
     }
 
-
-    // Program exit
-    @Override
-    public boolean onKeyDown(int keyCode, KeyEvent event) {
-        // KEYCODE_BACK is a back button on the table board.
-        if(keyCode == KeyEvent.KEYCODE_BACK){
-            stop = true;
-        }
-        return super.onKeyDown(keyCode, event);
-    }
-
     void setScore(int score){
-        count = score;
+        segment.value = score;
     }
 
     void OnPacmanGhostCollision(){
@@ -299,7 +268,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         @Override
         public void run() {
             try{
-                while(!stop){
+                while(true){
                     Thread.sleep(1);
                     String keypadInput = Keypad.read();
                     if(keypadInput == null){
