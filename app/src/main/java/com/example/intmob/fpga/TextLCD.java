@@ -18,6 +18,7 @@ public class TextLCD{
 
     public static native int write(String x);
 
+    // It does not work properly.
     public static int UpdateValue(String s, String s2){
         assert s.length() <= 16;
         assert s2.length() <= 16;

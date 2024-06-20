@@ -23,6 +23,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.example.intmob.fpga.DipSW;
 import com.example.intmob.fpga.Keypad;
 import com.example.intmob.fpga.LED;
+import com.example.intmob.fpga.OLED;
 import com.example.intmob.fpga.Segment;
 import com.example.intmob.fpga.TextLCD;
 import com.example.intmob.lang.DaemonThread;
@@ -35,6 +36,7 @@ import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 
 public class MainActivity extends AppCompatActivity implements SensorEventListener {
+    public static Context context;
     Vibrator mVibrator;
     private float proximity;
     private SensorManager sensorManager;
@@ -47,10 +49,13 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     // Static block is only called once when the class itself is initialized.
     // Used to load the 'intmob' library on application startup.
     static {
-        System.out.println("loadLibrary++");
         System.loadLibrary("intmob");
-        System.out.println("loadLibrary--");
+        System.out.println("MainActivity load intmob library done");
     } // JNI Library Load
+
+    public MainActivity(){
+        context = this;
+    }
 
     EventHandler m_eventHandler;
 
@@ -94,7 +99,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         glSurfaceView.setEGLContextClientVersion(2);
         glSurfaceView.setRenderer(new Renderer2());
 
-        System.out.println("------------------------- onCreate done ----------------------------");
+        System.out.println("-------------------------- onCreate done --------------------------------");
     }
 
     public class Renderer2 implements Renderer {
@@ -126,9 +131,14 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     public class EventHandler extends Handler{
         EventHandler(){}
         public void handleMessage(Message msg){
+            System.out.println("EventHandler:handle message...");
+
             try{
                 if(msg.what==1){
                     showDialog(DIALOG_SIMPLE_MESSAGE);
+                }
+                else if(msg.what == 2){
+                    OLED.displayImage();
                 }
             }
             catch(Exception ex){
@@ -177,11 +187,32 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                     System.out.println("DipSW value changed: "+value);
 
                     // Write code below which will be executed every dip switch value change
-                    mVibrator.vibrate(value / 100);
+
+                    if(value == 1){
+
+                        // vibrate in 300ms
+                        mVibrator.vibrate(300);
+
+                    }
+                    else if(value == 2){
+
+                        //FATAL EXCEPTION: Thread-104
+                        //java.lang.RuntimeException: Can't create handler inside thread that has not called Looper.prepare()
+
+                        // Show image on OLED
+                        Message msg0 = m_eventHandler.obtainMessage();
+                        msg0.what = 2;
+                        m_eventHandler.sendMessage(msg0);
+
+
+                    }
 
                 }
                 try {
+
+                    // Poll dipsw value every second.
                     sleep(1000);
+
                 } catch (InterruptedException e) {
                     return;
                 }
@@ -326,11 +357,13 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         // 7 8 9 ?
         // ? 0 ? A
 
+        // ? is unused key. Don't care.
+
         if(Objects.equals(key, "1")){
             // 1
 
-            // Can't create handler inside thread that has not called Looper.prepare()
-            // Use m_eventHandler message or get runtime exception
+            //FATAL EXCEPTION: Thread-104
+            //java.lang.RuntimeException: Can't create handler inside thread that has not called Looper.prepare()
 
             // show popup message window.
             Message msg1 = m_eventHandler.obtainMessage();
