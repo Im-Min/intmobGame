@@ -5,7 +5,18 @@ import com.example.intmob.MainActivity;
 public class TextLCD{
 
     static {
-        MainActivity.loadLibrary();}
+        MainActivity.loadLibrary();
+
+        disp = true; cursor = false; blink = false;
+
+        IOCtlClear();
+        IOCtlReturnHome();
+        IOCtlDisplay(true);
+        IOCtlCursor(false);
+        IOCtlBlink(false);
+
+        ret = TextLCDOut(" HANBACK ", " Electronics! ");
+    }
 
     public static native int TextLCDOut(String str, String str2);
 
@@ -21,49 +32,6 @@ public class TextLCD{
 
     public static native int write(String x);
 
-    // It does not work properly.
-    public static int UpdateValue(String s, String s2){
-        assert s.length() <= 16;
-        assert s2.length() <= 16;
-
-        int ret = IOCtlClear();
-        System.out.println("IOCtlClear="+ret);
-        if(ret < 0){
-            return ret;
-        }
-
-        ret = IOCtlReturnHome();
-        System.out.println("IOCtlReturnHome="+ret);
-        if(ret < 0){
-            return ret;
-        }
-
-        ret = IOCtlDisplay(true);
-        System.out.println("IOCtlDisplay(true)="+ret);
-        if(ret < 0){
-            return ret;
-        }
-
-        ret = IOCtlCursor(false);
-        System.out.println("IOCtlCursor(false)="+ret);
-        if(ret < 0){
-            return ret;
-        }
-
-        ret = IOCtlBlink(false);
-        System.out.println("IOCtlBlink(false)="+ret);
-        if(ret < 0){
-            return ret;
-        }
-
-        ret = TextLCDOut(s, s2);
-        System.out.println("TextLCDOut="+ret);
-        if(ret < 0){
-            return ret;
-        }
-
-        return 0;
-    }
-
-
+    private static int ret;
+    private static boolean disp, cursor, blink;
 }

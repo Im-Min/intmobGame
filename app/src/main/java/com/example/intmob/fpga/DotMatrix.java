@@ -30,7 +30,7 @@ public class DotMatrix extends DaemonThread {
 
     // Does not work at all.
     public void startf(String value, int speed) {
-        Log.d("DotMatrix", "start value=" + value);
+        Log.d("DotMatrix", "dot matrix start value=" + value);
         this.speed = speed;
         this.value = value;
 

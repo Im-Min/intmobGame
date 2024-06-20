@@ -12,6 +12,7 @@ import com.example.intmob.MainActivity;
 import com.example.intmob.R;
 
 public class OLED extends Activity {
+
     static{
         MainActivity.loadLibrary();
     }
@@ -19,16 +20,14 @@ public class OLED extends Activity {
     public static native int OLEDImage(int[] image, int width, int height);
 
     private static java.io.InputStream is0;
+
     private static Bitmap bm;
 
     private static int[] pixels;
+
     private static int width, height;
 
-
-
-    // err:OLED does not work at all.
     public static int displayImage() {
-
         // Draw Picture
         Resources resources = MainActivity.context.getResources();
         is0 = resources.openRawResource(R.raw.pacman);
@@ -41,22 +40,23 @@ public class OLED extends Activity {
         pixels = new int[width * height];
         bm.getPixels(pixels, 0, width, 0, 0, width, height);
 
+        //java.lang.RuntimeException: Can't create handler inside thread that has not called Looper.prepare()
         Handler mHandle = new Handler();
+
         mHandle.postDelayed(new Runnable() {
             @Override
             public void run() {
                 int ret = OLEDImage(pixels, width, height);
                 if(ret < 0){
-                    System.out.println("err:OLEDImage() returned "+ ret);
+                    Log.e("OLED", "OLEDImage()="+ ret);
                 }
                 else{
-                    System.out.println("OLEDImage() done");
+                    Log.d("OLED", "OLEDImage()="+ ret);
                 }
             }
         }, 1000);
 
-        System.out.println("displayImage() done");
-
+        Log.d("OLED", "displayImage() done");
         return 0;
     }
 

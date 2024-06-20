@@ -7,6 +7,7 @@
 #include <termios.h>
 #include <sys/mman.h>
 #include <errno.h>
+#include <android/log.h>
 
 #define TEXTLCD "/dev/fpga_textlcd"
 #define TEXTLCD_BASE            0xbc
@@ -62,7 +63,10 @@ int TextLCDIoctol(int cmd, char* buf){
     int fd, ret, i;
 
     fd = open(TEXTLCD, O_WRONLY | O_NDELAY);
-    if (fd < 0) return -errno;
+    if (fd < 0) {
+        __android_log_print(ANDROID_LOG_ERROR, "textlcd.c", "TextLCDIoctol:Device Open ERROR!\n");
+        return -errno;
+    }
 
     if (cmd == TEXTLCD_WRITE_BYTE) {
         ioctl(fd, TEXTLCD_DD_ADDRESS, &strcommand, 32);
@@ -87,7 +91,10 @@ JNICALL Java_com_example_intmob_fpga_TextLCD_TextLCDOut
     int fd, ret;
 
     fd = open(TEXTLCD, O_WRONLY | O_NDELAY);
-    if (fd < 0) return -errno;
+    if (fd < 0) {
+        __android_log_print(ANDROID_LOG_ERROR, "textlcd.c", "TextLCDOut:Device Open ERROR!\n");
+        return -errno;
+    }
 
     initialize();
 
@@ -163,14 +170,17 @@ JNIEXPORT jint JNICALL Java_com_example_intmob_fpga_TextLCD_IOCtlBlink
 JNIEXPORT jint JNICALL Java_com_example_intmob_fpga_TextLCD_write
         (JNIEnv *env, jobject obj, jstring x) {
 
-    int fd, ret, i;
+    int fd;
 
     fd = open(TEXTLCD, O_WRONLY | O_NDELAY);
-    if (fd < 0) return -errno;
+    if (fd < 0) {
+        __android_log_print(ANDROID_LOG_ERROR, "textlcd.c", "write:Device Open ERROR!\n");
+        return -errno;
+    }
 
     const char* cx = (*env)->GetStringUTFChars(env, x, 0);
 
-    ret = write(fd, cx, strlen(cx));
+    write(fd, cx, strlen(cx));
     close(fd);
 
     (*env)->ReleaseStringUTFChars(env, x, cx);

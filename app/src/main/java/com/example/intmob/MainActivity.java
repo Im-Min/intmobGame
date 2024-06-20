@@ -61,7 +61,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         context = this;
     }
 
-    EventHandler m_eventHandler;
+    Handler m_eventHandler;
     private Segment segment = new Segment();
     private DotMatrix dotMatrix = new DotMatrix();
 
@@ -93,7 +93,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
         prox = sensorManager.getDefaultSensor(Sensor.TYPE_PROXIMITY);
 
-        m_eventHandler = new EventHandler();
+        m_eventHandler = new Handler();
 
         // Thread Start
         segment.start();
@@ -138,21 +138,6 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         }
     }
 
-    public static class EventHandler extends Handler{
-        public void handleMessage(@NonNull Message msg){
-            System.out.println("EventHandler:handle message...");
-
-            try{
-                if(msg.what == 2){
-                    OLED.displayImage();
-                }
-            }
-            catch(Exception ex){
-                Log.e("handleMessage", ex.toString());
-            }
-        }
-    }
-
     void setScore(int score){
         segment.value = score;
     }
@@ -174,7 +159,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
         paused = false;
 
-        System.out.println("onResume");
+        Log.d("MainActivity", "resumed");
 
         if(prox != null){
             sensorManager.registerListener(this, prox,
@@ -214,42 +199,54 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
         switch (key) {
             case 1:
-                LED.random();
+                TextLCD.TextLCDOut(" HaNbAcK ", " eLeCtRoNiCs!! ");
                 break;
             case 2:
-                FLED.random();
+                TextLCD.IOCtlDisplay(true);
                 break;
             case 3:
-                segment.random();
+                TextLCD.IOCtlDisplay(false);
                 break;
             case 4:
-                dotMatrix.startf("PACMAN", 19);
+                dotMatrix.startf("PACMAN", 18);
                 break;
             case 5:
-                setDirectionDown();
+                TextLCD.IOCtlBlink(false);
                 break;
             case 6:
-                setDirectionRight();
+                TextLCD.IOCtlBlink(true);
                 break;
             case 7:
-                assert TextLCD.IOCtlReturnHome() >= 0;
+                TextLCD.IOCtlReturnHome();
                 break;
             case 8:
-                assert TextLCD.IOCtlClear() >= 0;
+                TextLCD.IOCtlClear();
                 break;
             case 9:
-                assert TextLCD.IOCtlCursor(false) >= 0;
+                TextLCD.IOCtlCursor(false);
                 break;
             case 0:
-                assert TextLCD.IOCtlCursor(true) >= 0;
+                TextLCD.IOCtlCursor(true);
                 break;
             case 10:
-                assert TextLCD.write("0123456789ABCDEFGHIJ") == 0;
+                TextLCD.write(
+                        nextString(dice, "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz", 20)
+                );
                 break;
         }
 
         Log.d("keypad", "keypad input="+key);
         return 0;
+    }
+
+    public static String nextString(Random rng, String characters, int length)
+    {
+        char[] text = new char[length];
+        for (int i = 0; i < length; i++)
+        {
+            text[i] = characters.charAt(rng.nextInt(characters.length()));
+        }
+        return new String(text);
     }
 
     private void enterFullScreenMode() {
