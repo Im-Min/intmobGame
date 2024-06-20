@@ -1,6 +1,5 @@
 package com.example.intmob;
 
-import android.app.Dialog;
 import android.content.Context;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
@@ -14,7 +13,6 @@ import android.os.Handler;
 import android.os.Message;
 import android.opengl.GLSurfaceView;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -22,7 +20,6 @@ import android.view.WindowManager;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.example.intmob.fpga.DipSW;
 import com.example.intmob.fpga.DotMatrix;
 import com.example.intmob.fpga.FLED;
 import com.example.intmob.fpga.Keypad;
@@ -30,11 +27,9 @@ import com.example.intmob.fpga.LED;
 import com.example.intmob.fpga.OLED;
 import com.example.intmob.fpga.Segment;
 import com.example.intmob.fpga.TextLCD;
-import com.example.intmob.lang.DaemonThread;
 
 import java.io.DataOutputStream;
 import java.lang.Process;
-import java.util.Objects;
 import java.util.Random;
 
 import javax.microedition.khronos.egl.EGLConfig;
@@ -83,10 +78,13 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
         dotMatrix = new DotMatrix();
 
-        if(chmod777() != 0){
-            System.out.println("err:chmod777 fail. return");
-            return;
-        }
+        new Keypad(new Keypad.KeypadHandler() {
+            @Override
+            public int handle(int x) {
+                return handleKeypadInput(x);
+            }
+        }).start();
+
 
         sensorManager = (SensorManager)getSystemService(SENSOR_SERVICE);
 
@@ -98,8 +96,6 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
         // Thread Start
         segment.start();
-        new DipSWThread().start();
-        new KeypadThread().start();
 
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
@@ -155,63 +151,6 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         }
     }
 
-
-
-    private class DipSWThread extends DaemonThread {
-        @Override
-        public void run() {
-            int value = DipSW.GetValue();
-            if(value < 0){
-                System.out.println("err0:DipSW.GetValue returned "+value);
-                return;
-            }
-            while(true){
-                int ret = DipSW.GetValue();
-                if(ret < 0){
-                    System.out.println("err1:DipSW.GetValue returned "+value);
-                    return;
-                }
-                if(value != ret){
-                    value = ret;
-                    System.out.println("DipSW value changed: "+value);
-
-                    // Write code below which will be executed every dip switch value change
-
-                    if(value == 1){
-
-                        // vibrate in 300ms
-                        mVibrator.vibrate(300);
-
-                    }
-                    else if(value == 2){
-
-                        //FATAL EXCEPTION: Thread-104
-                        //java.lang.RuntimeException: Can't create handler inside thread that has not called Looper.prepare()
-
-                        // Show image on OLED
-                        Message msg0 = m_eventHandler.obtainMessage();
-                        msg0.what = 2;
-                        m_eventHandler.sendMessage(msg0);
-
-
-                    }
-                    else if(value == 4){
-                        dotMatrix.startf("HANBACKK.");
-                    }
-
-                }
-                try {
-
-                    // Poll dipsw value every second.
-                    sleep(1000);
-
-                } catch (InterruptedException e) {
-                    return;
-                }
-            }
-        }
-    }
-
     void setScore(int score){
         segment.value = score;
     }
@@ -252,7 +191,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
         paused = true;
 
-        System.out.println("onPause");
+        Log.d("MainActivity", "paused");
 
         glSurfaceView.onPause();
 
@@ -263,107 +202,52 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     }
 
 
-
-    private class KeypadThread extends DaemonThread{
-        @Override
-        public void run() {
-            try{
-                while(true){
-                    Thread.sleep(1);
-                    String keypadInput = Keypad.read();
-                    if(keypadInput == null){
-                        return;
-                    }
-
-                    if(Objects.equals(keypadInput, "open:Permisson denied")){
-                        // if permission denied while opening a device
-                        System.err.println(keypadInput);
-                        return;
-                    }
-
-                    System.out.println("keypad pressed: '" + keypadInput + "'");
-                    if(handleKeypadInput(keypadInput) != 0){
-                        return;
-                    }
-                }
-            }
-            catch(Exception ex){
-                Log.e("keypad", ex.toString());
-            }
-        }
-    }
-
-
-    int handleKeypadInput(String key){
+    int handleKeypadInput(int key){
         // keypad key mapping:
         // 1 2 3 ?
         // 4 5 6 ?
         // 7 8 9 ?
-        // ? 0 ? A
+        // ? 0 ? 10
 
         // ? is denoted as not recognized key.
         // That means, even if the user press that key, the program cannot detect, poll or listen it.
 
-        if(Objects.equals(key, "1")){
-            // 1
+        switch (key) {
+            case 1:
+                LED.random();
+                break;
+            case 2:
+                FLED.random();
+                break;
+            case 3:
+                segment.random();
+                break;
+            case 4:
+                break;
+            case 5:
+                setDirectionDown();
+                break;
+            case 6:
+                setDirectionRight();
+                break;
+            case 7:
+                assert TextLCD.IOCtlReturnHome() >= 0;
+                break;
+            case 8:
+                assert TextLCD.IOCtlClear() >= 0;
+                break;
+            case 9:
+                assert TextLCD.IOCtlCursor(false) >= 0;
+                break;
+            case 0:
+                assert TextLCD.IOCtlCursor(true) >= 0;
+                break;
+            case 10:
+                assert TextLCD.write("0123456789ABCDEFGHIJ") == 0;
+                break;
+        }
 
-
-        }
-        else if(Objects.equals(key, "2")){
-            // 2 (up)
-
-            setDirectionUp();
-        }
-        else if(Objects.equals(key, "3")){
-            // 3
-
-            setScore(dice.nextInt(1000000));
-        }
-        else if(Objects.equals(key, "4")){
-            // 4 (left)
-            FLED.random();
-        }
-        else if(Objects.equals(key, "5")){
-            // 5 (down)
-            setDirectionDown();
-        }
-        else if(Objects.equals(key, "6")){
-            // 6 (right)
-            setDirectionRight();
-        }
-        else if("7".equals(key)){
-            // 7
-
-            // Set cursor home.
-            assert TextLCD.IOCtlReturnHome() >= 0;
-        }
-        else if(Objects.equals(key, "8")){
-            // 8
-
-            // Clear TextLCD.
-            assert TextLCD.IOCtlClear() >= 0;
-        }
-        else if(Objects.equals(key, "9")){
-            // 9
-
-            // Hide cursor.
-            assert TextLCD.IOCtlCursor(false) >= 0;
-        }
-        else if(Objects.equals(key, ":")){
-            // 0
-
-            // Show cursor.
-            assert TextLCD.IOCtlCursor(true) >= 0;
-        }
-        else if(Objects.equals(key, "=")){
-            // A
-
-            assert TextLCD.write("0123456789ABCDEFGHIJ") == 0;
-        }
-        else{
-            System.err.println("err:Unknown keypad input. key='"+key+"', length="+key.length());
-            return 1;
-        }
+        Log.d("keypad", "keypad input="+key);
         return 0;
     }
 
@@ -419,22 +303,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         return ret;
     }
 
-    public static int chmod777() {
-        try {
-            Process p = Runtime.getRuntime().exec("su");
-            DataOutputStream os = new DataOutputStream(p.getOutputStream());
-            os.writeBytes("chmod 777 /dev/input/*\n");
-            os.writeBytes("exit\n");
-            os.flush();
-            os.close();
-            p.waitFor();
-        }
-        catch(Exception ex){
-            Log.e("chmod", ex.toString());
-            return 1;
-        }
-        return 0;
-    }
+
 
     public void onAccuracyChanged(Sensor sensor, int accuracy){}
 
@@ -442,7 +311,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         switch(event.sensor.getType()){
             case Sensor.TYPE_PROXIMITY:
                 float proximity = event.values[0]; // 0=near, 5=far
-                Log.d("proximity", String.valueOf(proximity));
+                Log.d("proximity", "proximity="+proximity);
                 break;
         }
     }

@@ -2,8 +2,6 @@ package com.example.intmob.fpga;
 
 import com.example.intmob.MainActivity;
 
-import java.util.Random;
-
 public class LED {
 
     static {
@@ -13,7 +11,7 @@ public class LED {
     public static native int off();
     public static native int set(int value);
 
-    public static int rand(){
+    public static int random(){
         int ret = set(MainActivity.dice.nextInt(256));
 
         if(ret != 0){

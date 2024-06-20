@@ -19,21 +19,30 @@ public class Segment extends DaemonThread {
     public void run(){
             while(true) {
                 if(0 <= value && value <= 999999) {
+
                     if (Segment.writeInt(value) != 0) {
+
                         try {
                             sleep(1000);
                         } catch (InterruptedException e) {
                             return;
                         }
+
                     }
+
                 }
+
                 try {
                     sleep(1);
                 } catch (InterruptedException e) {
                     return;
                 }
-            }
 
+            }
+    }
+
+    public void random(){
+        value = MainActivity.dice.nextInt(1000000);
     }
 
 }

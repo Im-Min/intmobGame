@@ -48,6 +48,7 @@ Java_com_example_intmob_fpga_Segment_writeInt(JNIEnv* env,
 
         ret = write(dev, str, 6);
         close(dev);
+
     } else{
         __android_log_print(ANDROID_LOG_ERROR, "7segment.c", "Device Open ERROR!\n");
         return 1;
