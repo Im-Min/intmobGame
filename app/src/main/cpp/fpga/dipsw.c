@@ -16,20 +16,17 @@
 
 JNIEXPORT jint JNICALL Java_com_example_intmob_fpga_DipSW_GetValue
         (JNIEnv *env, jobject obj) {
-    int ret;
-    int data = 0;
+    unsigned short data = 0;
     int fd;
 
     fd = open(DIPSW, O_RDONLY);
-    if (fd < 0)
+    if (fd < 0) {
         return -errno;
-
-
-    ret = read(fd, &data, 2);
-    if(ret == 2) {
-        close(fd);
-        return data;
     }
 
-    return -127;
+    read(fd, &data, 2);
+
+    close(fd);
+
+    return data;
 }

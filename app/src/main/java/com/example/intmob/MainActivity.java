@@ -158,18 +158,18 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         public void run() {
             int value = DipSW.GetValue();
             if(value < 0){
-                System.out.println("err0:DipSW value="+value);
+                System.out.println("err0:DipSW.GetValue returned "+value);
                 return;
             }
             while(!stop){
                 int ret = DipSW.GetValue();
                 if(ret < 0){
-                    System.out.println("err1:DipSW value="+value);
+                    System.out.println("err1:DipSW.GetValue returned "+value);
                     return;
                 }
                 if(value != ret){
                     value = ret;
-                    System.out.println("DipSW value changed. was "+value);
+                    System.out.println("DipSW value changed: "+value);
                 }
                 try {
                     sleep(1000);
