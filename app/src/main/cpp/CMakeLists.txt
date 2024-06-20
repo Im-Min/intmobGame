@@ -34,6 +34,7 @@ add_library(${CMAKE_PROJECT_NAME} SHARED
         fpga/keypad.c
         fpga/dipsw.c
         fpga/oled.c
+        fpga/dotmatrix.c
 
         graphic.cpp
         play.cpp

@@ -1,8 +1,10 @@
 package com.example.intmob.fpga;
 
+import com.example.intmob.MainActivity;
+
 public class DipSW {
     static{
-        System.loadLibrary("intmob");
+        MainActivity.loadLibrary();
     }
 
     public static native int GetValue();

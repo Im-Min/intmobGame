@@ -21,6 +21,7 @@ import android.view.WindowManager;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.intmob.fpga.DipSW;
+import com.example.intmob.fpga.DotMatrix;
 import com.example.intmob.fpga.Keypad;
 import com.example.intmob.fpga.LED;
 import com.example.intmob.fpga.OLED;
@@ -31,6 +32,7 @@ import com.example.intmob.lang.DaemonThread;
 import java.io.DataOutputStream;
 import java.lang.Process;
 import java.util.Objects;
+import java.util.Random;
 
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
@@ -38,18 +40,26 @@ import javax.microedition.khronos.opengles.GL10;
 public class MainActivity extends AppCompatActivity implements SensorEventListener {
     public static Context context;
     Vibrator mVibrator;
-    private float proximity;
     private SensorManager sensorManager;
     private Sensor prox;
     protected static final int DIALOG_SIMPLE_MESSAGE = 1;
-    boolean stop = false;
-    int count = 0;
+    boolean stop;
+    int count;
     private GLSurfaceView glSurfaceView;
+    private DotMatrix dotMatrix;
+
+    private static boolean isLibraryLoaded;
+    public static void loadLibrary(){
+        if(!isLibraryLoaded) {
+            System.loadLibrary("intmob");
+            isLibraryLoaded = true;
+        }
+    }
 
     // Static block is only called once when the class itself is initialized.
     // Used to load the 'intmob' library on application startup.
     static {
-        System.loadLibrary("intmob");
+        loadLibrary();
         System.out.println("MainActivity load intmob library done");
     } // JNI Library Load
 
@@ -70,6 +80,8 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         requestWindowFeature(Window.FEATURE_NO_TITLE);
 
         mVibrator = (Vibrator)getSystemService(Context.VIBRATOR_SERVICE);
+
+        dotMatrix = new DotMatrix();
 
         if(chmod777() != 0){
             System.out.println("err:chmod777 fail. return");
@@ -206,6 +218,9 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
 
                     }
+                    else if(value == 4){
+                        dotMatrix.startf("HANBACKK.");
+                    }
 
                 }
                 try {
@@ -281,7 +296,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         enterFullScreenMode();
     }
 
-    private boolean paused = false;
+    private boolean paused;
 
     @Override
     protected void onPause() {
@@ -304,8 +319,8 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     public void onSensorChanged(SensorEvent event){
         switch(event.sensor.getType()){
             case Sensor.TYPE_PROXIMITY:
-                proximity = event.values[0];
-                System.out.println("proximity="+proximity);
+                float proximity = event.values[0];
+                System.out.println("proximity="+ proximity);
 
                 if(proximity == 0){
                     // near
@@ -315,10 +330,6 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
                 break;
         }
-    }
-
-    private void printex(Exception ex){
-        System.err.println(ex.toString());
     }
 
     private class KeypadThread extends DaemonThread{
@@ -350,6 +361,8 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         }
     }
 
+    public static Random dice = new Random();
+
     int handleKeypadInput(String key){
         // keypad key mapping:
         // 1 2 3 ?
@@ -378,8 +391,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         else if(Objects.equals(key, "3")){
             // 3
 
-            // Set fpga_segment number to 098765.
-            setScore(98765);
+            setScore(dice.nextInt(1000000));
         }
         else if(Objects.equals(key, "4")){
             // 4

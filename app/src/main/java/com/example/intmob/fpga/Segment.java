@@ -1,8 +1,11 @@
 package com.example.intmob.fpga;
 
+import com.example.intmob.MainActivity;
+
 public class Segment {
 
-    static {System.loadLibrary("intmob");}
+    static {
+        MainActivity.loadLibrary();}
 
     private static native int SegmentControl(String value);
     public static int set7SegmentNumber(int x){

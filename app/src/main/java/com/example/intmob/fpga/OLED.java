@@ -13,7 +13,7 @@ import com.example.intmob.R;
 
 public class OLED extends Activity {
     static{
-        System.loadLibrary("intmob");
+        MainActivity.loadLibrary();
     }
 
     public static native int OLEDImage(int[] image, int width, int height);
@@ -24,6 +24,9 @@ public class OLED extends Activity {
     private static int[] pixels;
     private static int width, height;
 
+
+
+    // err:OLED does not work at all.
     public static int displayImage() {
 
         // Draw Picture

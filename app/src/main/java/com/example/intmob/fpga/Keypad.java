@@ -1,8 +1,11 @@
 package com.example.intmob.fpga;
 
+import com.example.intmob.MainActivity;
+
 public class Keypad {
 
-    static {System.loadLibrary("intmob");}
+    static {
+        MainActivity.loadLibrary();}
 
     public static native String read(String event);
     private static native String idev();

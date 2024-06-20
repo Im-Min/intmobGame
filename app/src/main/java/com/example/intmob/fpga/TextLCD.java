@@ -1,8 +1,11 @@
 package com.example.intmob.fpga;
 
+import com.example.intmob.MainActivity;
+
 public class TextLCD{
 
-    static {System.loadLibrary("intmob");}
+    static {
+        MainActivity.loadLibrary();}
 
     public static native int TextLCDOut(String str, String str2);
 
