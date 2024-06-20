@@ -156,28 +156,20 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     @Override
     protected void onResume() {
         super.onResume();
-
-        paused = false;
-
         Log.d("MainActivity", "resumed");
 
-        if(prox != null){
-            sensorManager.registerListener(this, prox,
-                    SensorManager.SENSOR_DELAY_NORMAL);
-        }
+        enterFullScreenMode();
 
         glSurfaceView.onResume();
-        enterFullScreenMode();
-    }
 
-    private boolean paused;
+        if(prox != null){
+            sensorManager.registerListener(this, prox, SensorManager.SENSOR_DELAY_NORMAL);
+        }
+    }
 
     @Override
     protected void onPause() {
         super.onPause();
-
-        paused = true;
-
         Log.d("MainActivity", "paused");
 
         glSurfaceView.onPause();
