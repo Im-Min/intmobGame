@@ -13,11 +13,13 @@ import android.os.Vibrator;
 import android.os.Handler;
 import android.os.Message;
 import android.opengl.GLSurfaceView;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.intmob.fpga.DipSW;
@@ -43,7 +45,6 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     Vibrator mVibrator;
     private SensorManager sensorManager;
     private Sensor prox;
-    protected static final int DIALOG_SIMPLE_MESSAGE = 1;
     boolean stop;
     int count;
     private GLSurfaceView glSurfaceView;
@@ -141,21 +142,17 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         }
     }
 
-    public class EventHandler extends Handler{
-        EventHandler(){}
-        public void handleMessage(Message msg){
+    public static class EventHandler extends Handler{
+        public void handleMessage(@NonNull Message msg){
             System.out.println("EventHandler:handle message...");
 
             try{
-                if(msg.what==1){
-                    showDialog(DIALOG_SIMPLE_MESSAGE);
-                }
-                else if(msg.what == 2){
+                if(msg.what == 2){
                     OLED.displayImage();
                 }
             }
             catch(Exception ex){
-                ex.printStackTrace();
+                Log.e("handleMessage", ex.toString());
             }
         }
     }
@@ -176,7 +173,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                 }
 
             } catch (InterruptedException ex) {
-                ex.printStackTrace();
+                Log.e("7seg", ex.toString());
             }
         }
     }
@@ -247,24 +244,6 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         return super.onKeyDown(keyCode, event);
     }
 
-    // Exception processing for input countdown value
-    @Override
-    protected Dialog onCreateDialog(int id) {
-        Dialog d = new Dialog(MainActivity.this);
-        Window window = d.getWindow();
-
-        window.setFlags(WindowManager.LayoutParams.FIRST_APPLICATION_WINDOW,
-                WindowManager.LayoutParams.FIRST_APPLICATION_WINDOW);
-
-        switch(id){
-            case DIALOG_SIMPLE_MESSAGE:
-                d.setTitle("Maximum input digit is 6");
-                d.show();
-                return d;
-        }
-        return super.onCreateDialog(id);
-    }
-
     void setScore(int score){
         count = score;
     }
@@ -320,14 +299,12 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     public void onSensorChanged(SensorEvent event){
         switch(event.sensor.getType()){
             case Sensor.TYPE_PROXIMITY:
-                float proximity = event.values[0];
-                System.out.println("proximity="+ proximity);
 
-                if(proximity == 0){
-                    // near
-                    
-                    LED.rand();
-                }
+                // 0.0 means near
+                // 5.0 means far
+                float proximity = event.values[0];
+
+                Log.d("proximity", String.valueOf(proximity));
 
                 break;
         }
@@ -357,7 +334,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                 }
             }
             catch(Exception ex){
-                ex.printStackTrace();
+                Log.e("keypad", ex.toString());
             }
         }
     }
@@ -371,18 +348,12 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         // 7 8 9 ?
         // ? 0 ? A
 
-        // ? is unused key. Don't care.
+        // ? is denoted as not recognized key.
+        // That means, even if the user press that key, the program cannot detect, poll or listen it.
 
         if(Objects.equals(key, "1")){
             // 1
 
-            //FATAL EXCEPTION: Thread-104
-            //java.lang.RuntimeException: Can't create handler inside thread that has not called Looper.prepare()
-
-            // show popup message window.
-            Message msg1 = m_eventHandler.obtainMessage();
-            msg1.what = 1;
-            m_eventHandler.sendMessage(msg1);
 
         }
         else if(Objects.equals(key, "2")){
@@ -469,6 +440,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         }
         return ret;
     }
+
     int setDirectionLeft(){
         int ret = setDirection(LEFT);
         if(ret != 0){
@@ -477,7 +449,6 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         return ret;
     }
 
-
     int setDirectionDown(){
         int ret = setDirection(DOWN);
         if(ret != 0){
@@ -485,6 +456,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         }
         return ret;
     }
+
     int setDirectionRight(){
         int ret = setDirection(RIGHT);
         if(ret != 0){
@@ -505,7 +477,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
         }
         catch(Exception ex){
-            ex.printStackTrace();
+            Log.e("chmod", ex.toString());
             return 1;
         }
         return 0;
