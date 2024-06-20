@@ -77,8 +77,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         super.onCreate(savedInstanceState);
         System.out.println("super.onCreate(savedInstanceState) done");
 
-        // requestFeature() must be called before adding content
-        // or get runtime exception
+        // NOTE: requestFeature() must be called before adding content
         requestWindowFeature(Window.FEATURE_NO_TITLE);
 
         mVibrator = (Vibrator)getSystemService(Context.VIBRATOR_SERVICE);
@@ -164,7 +163,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                 while(!stop) {
 
                     if(!paused) {
-                        if (Segment.set7SegmentNumber(count) != 0) {
+                        if (Segment.writeInt(count) != 0) {
                             sleep(1000);
                         }
                     }
@@ -294,21 +293,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         super.onStop();
     }
 
-    public void onAccuracyChanged(Sensor sensor, int accuracy){}
 
-    public void onSensorChanged(SensorEvent event){
-        switch(event.sensor.getType()){
-            case Sensor.TYPE_PROXIMITY:
-
-                // 0.0 means near
-                // 5.0 means far
-                float proximity = event.values[0];
-
-                Log.d("proximity", String.valueOf(proximity));
-
-                break;
-        }
-    }
 
     private class KeypadThread extends DaemonThread{
         @Override
@@ -339,7 +324,6 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         }
     }
 
-    public static Random dice = new Random();
 
     int handleKeypadInput(String key){
         // keypad key mapping:
@@ -433,6 +417,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     static final int DOWN = 1;
     static final int LEFT = 2;
     static final int RIGHT = 3;
+
     int setDirectionUp(){
         int ret = setDirection(UP);
         if(ret != 0){
@@ -474,7 +459,6 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             os.flush();
             os.close();
             p.waitFor();
-
         }
         catch(Exception ex){
             Log.e("chmod", ex.toString());
@@ -482,6 +466,19 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         }
         return 0;
     }
+
+    public void onAccuracyChanged(Sensor sensor, int accuracy){}
+
+    public void onSensorChanged(SensorEvent event){
+        switch(event.sensor.getType()){
+            case Sensor.TYPE_PROXIMITY:
+                float proximity = event.values[0]; // 0=near, 5=far
+                Log.d("proximity", String.valueOf(proximity));
+                break;
+        }
+    }
+
+    public static Random dice = new Random();
 
     /**
      * A native method that is implemented by the 'intmob' native library,
